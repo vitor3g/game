@@ -1,5 +1,5 @@
-import globals from "globals";
 import pluginJs from "@eslint/js";
+import globals from "globals";
 import tseslint from "typescript-eslint";
 
 /** @type {import('eslint').Linter.Config[]} */
@@ -34,6 +34,7 @@ export default [
       "@typescript-eslint/no-require-imports": "off",
       "@typescript-eslint/unbound-method": "off",
       "@typescript-eslint/prefer-promise-reject-errors": "off",
+      "@typescript-eslint/no-redundant-type-constituents": "off"
     },
   },
 ];

@@ -2,6 +2,7 @@ import { Logger } from "@/common/logger";
 import { Game } from "../game/game";
 import { Graphics } from "../graphics/graphics";
 import { Physics } from "../physics/physics";
+import { EntityManager } from "./entity-manager";
 import { TickManager } from "./tick-manager";
 
 export class Core {
@@ -10,12 +11,15 @@ export class Core {
   private readonly physics: Physics;
   private readonly game: Game;
   private readonly tickManager: TickManager;
+  private readonly entityManager: EntityManager;
 
   constructor() {
     this.logger = new Logger("dz::core");
     this.graphics = new Graphics();
     this.physics = new Physics();
     this.tickManager = new TickManager();
+    this.entityManager = new EntityManager(this);
+
     this.game = new Game();
 
     this.logger.log("Core");
@@ -40,6 +44,10 @@ export class Core {
 
   public getPhysics() {
     return this.physics;
+  }
+
+  public getEntityManager() {
+    return this.entityManager;
   }
 
   public getTickManager() {
