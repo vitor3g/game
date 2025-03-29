@@ -4,7 +4,7 @@
       {
         "type": "chrome",
         "request": "launch",
-        "name": "San Andreas World",
+        "name": "Drift Zone Debug",
         "url": "http://localhost:3333",
         "webRoot": "${workspaceFolder}",
         "preLaunchTask": "Run Vite Server"

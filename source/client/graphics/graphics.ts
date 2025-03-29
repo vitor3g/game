@@ -6,7 +6,7 @@ export class Graphics {
   private readonly renderer: Renderer;
 
   constructor() {
-    this.logger = new Logger("dp::graphics");
+    this.logger = new Logger("dz::graphics");
     this.renderer = new Renderer(this);
   }
 
@@ -16,6 +16,10 @@ export class Graphics {
 
   public getLogger() {
     return this.logger;
+  }
+
+  public getRendererScene() {
+    return this.renderer.scene;
   }
 
   public getRenderer() {

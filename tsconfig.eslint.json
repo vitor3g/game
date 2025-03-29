@@ -7,6 +7,7 @@
     "eslint.config.js",
     "lingui.config.ts",
     "helpers/**/*",
-    "data/**/*"
+    "data/**/*",
+    "@types/**/*"
   ]
 }

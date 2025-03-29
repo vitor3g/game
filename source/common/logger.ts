@@ -38,13 +38,14 @@ export class Logger implements LoggerService {
   constructor(private context: string) {
     const colorIndex = Math.floor(Math.random() * colors.length);
     this.contextColor = colors[colorIndex];
+
+    this.log("initialized logger")
   }
 
   private formatMessage(level: LogLevel, message: any): string {
     const levelColor = logLevelColors[level] || resetColor;
-    return `${this.contextColor}[${
-      this.context
-    }]:${resetColor}${levelColor} ${message}${resetColor}`;
+    return `${this.contextColor}[${this.context
+      }]:${resetColor}${levelColor} ${message}${resetColor}`;
   }
 
   private logToConsole(

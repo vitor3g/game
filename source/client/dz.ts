@@ -1,22 +1,22 @@
 import { Logger } from "@/common/logger";
 import { CoreModule } from "./core/core";
 
-export class dpFactoryStatic {
+export class dzFactoryStatic {
   private readonly logger!: Logger;
 
   constructor() {
-    this.logger = new Logger("dp::factory");
+    this.logger = new Logger("dz::factory");
   }
 
   public async create() {
     const module = CoreModule();
 
-    module.start();
+    await module.start();
 
-    this.logger.log("drift paradise module initialized");
+    this.logger.log("drift zone module initialized");
 
     return 0;
   }
 }
 
-export const DriftParadise = new dpFactoryStatic();
+export const DriftZone = new dzFactoryStatic();

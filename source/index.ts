@@ -1,11 +1,11 @@
-import { DriftParadise } from "@/client/dp";
+import { DriftZone } from "@/client/dz";
 import { dynamicActivate } from "@helpers/locale/i18n";
 
 async function bootstrap() {
   // Initialize i18n
   dynamicActivate("en");
 
-  await DriftParadise.create();
+  await DriftZone.create();
 }
 
 bootstrap();

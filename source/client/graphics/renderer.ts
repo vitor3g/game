@@ -1,8 +1,8 @@
-import * as THREE from "three";
-import { Graphics } from "./graphics";
 import { SString } from "@/shared/shared.utils";
 import Stats from "stats.js";
+import * as THREE from "three";
 import { OrbitControls, RoomEnvironment } from "three/examples/jsm/Addons.js";
+import { Graphics } from "./graphics";
 
 export class Renderer {
   public scene: THREE.Scene;
@@ -10,6 +10,7 @@ export class Renderer {
   public renderer: THREE.WebGLRenderer;
   private controls: OrbitControls;
   private stats: Stats;
+  private clock = new THREE.Clock();
 
   constructor(private readonly g_graphics: Graphics) {
     this.scene = new THREE.Scene();
@@ -54,12 +55,16 @@ export class Renderer {
     document.body.appendChild(this.stats.dom);
 
     window.addEventListener("resize", this.onWindowResize);
+
   }
 
   private animate(): void {
+    const delta = this.clock.getDelta()
+
     this.controls.update();
     this.stats.update();
     this.renderer.render(this.scene, this.camera);
+    g_core.getTickManager().update(delta);
   }
 
   private onWindowResize = (): void => {
