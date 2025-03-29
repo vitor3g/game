@@ -1,1 +1,2 @@
-# paradise
+# DRIFT PARADISE
+Drift culture for everyone.

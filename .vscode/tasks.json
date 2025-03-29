@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Run Vite Server",
+        "type": "shell",
+        "command": "yarn dev",
+        "isBackground": true,
+        "problemMatcher": {
+          "owner": "custom",
+          "pattern": [
+            {
+              "regexp": ".",
+              "file": 1,
+              "location": 2,
+              "message": 3
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "vite v\\d+\\.\\d+\\.\\d+",
+            "endsPattern": "ready in .*"
+          }
+        }
+      }
+    ]
+  }
+  
