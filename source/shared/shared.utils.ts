@@ -1,4 +1,5 @@
 import format from "@stdlib/string-format";
+import * as THREE from "three";
 
 export const isUndefined = (obj: any): obj is undefined =>
   typeof obj === "undefined";
@@ -21,7 +22,7 @@ export const isPlainObject = (fn: any): fn is object => {
     typeof ctor === "function" &&
     ctor instanceof ctor &&
     Function.prototype.toString.call(ctor) ===
-      Function.prototype.toString.call(Object)
+    Function.prototype.toString.call(Object)
   );
 };
 
@@ -64,4 +65,16 @@ export const generateColors = () => {
 
 export function SString(str: string, ...args: any[]) {
   return format(str, ...args);
+}
+
+export function findFirstMesh(object: THREE.Object3D): THREE.Mesh | null {
+  let mesh: THREE.Mesh | null = null;
+
+  object.traverse((child) => {
+    if (child instanceof THREE.Mesh && !mesh) {
+      mesh = child;
+    }
+  });
+
+  return mesh;
 }

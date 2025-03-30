@@ -1,51 +1,61 @@
-import type { RigidBody } from "@/client/physics/rigid-body";
+import { RigidBody } from "@/client/physics/rigid-body";
+import { findFirstMesh } from "@/shared/shared.utils";
+import { PhysicsShapeFactory } from "../physics/physics-shape";
 import { ObjectEntity } from "./entities/object.entity";
-import type { ModelInfo } from "./model-info";
+import { ModelInfo, type ModelInfoProps } from "./model-info";
 
 /**
  * Central registry for all ObjectEntity instances.
  */
 export class Objects {
-  private static entities = new Map<number, ObjectEntity>();
-  private static idCounter = 0;
+  private entities = new Map<number, ObjectEntity>();
+  private idCounter = 0;
 
-  public static createObject(
-    params: {
-      modelInfo: ConstructorParameters<typeof ModelInfo>[0];
-      rigidBody: RigidBody;
-    },
-    id?: string,
-  ): ObjectEntity {
+  constructor() {}
+
+  public async createObject(params: {
+    modelInfo: ModelInfoProps;
+    mass?: number;
+  }): Promise<ObjectEntity> {
+    const model = g_core.getModels().registerModel(new ModelInfo(params.modelInfo));
+    const rootObject = await model.loadModelAsync();
+
+    const mesh = findFirstMesh(rootObject);
+    if (!mesh) {
+      throw new Error("Nenhum mesh encontrado no modelo carregado.");
+    }
+
+    const shape = PhysicsShapeFactory.fromMesh(mesh);
+    if (!shape) {
+      throw new Error("Não foi possível gerar shape físico a partir do mesh.");
+    }
+
+    const rigidBody = new RigidBody(shape, params.mass ?? 0);
+
     const objectId = this.idCounter++;
-
-    const entity = new ObjectEntity(
-      {
-        objectId,
-        modelInfo: params.modelInfo,
-        rigidBody: params.rigidBody,
-      },
-      id,
-    );
+    const entity = new ObjectEntity({ objectId, modelId: model.modelInfo.id, rigidBody, });
 
     this.entities.set(objectId, entity);
     return entity;
   }
 
-  public static getObjectById(objectId: number): ObjectEntity | undefined {
+
+
+  public getObjectById(objectId: number): ObjectEntity | undefined {
     return this.entities.get(objectId);
   }
 
-  public static updateAll(): void {
+  public updateAll(): void {
     for (const entity of this.entities.values()) {
       entity.update();
     }
   }
 
   public getObjectCount() {
-    return Objects.idCounter;
+    return this.idCounter;
   }
 
-  public static clear(): void {
+  public clear(): void {
     this.entities.clear();
     this.idCounter = 1;
   }

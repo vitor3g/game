@@ -34,7 +34,9 @@ export class Gui {
     ImGui_Impl.NewFrame(dt);
     ImGui.NewFrame();
 
+
     this.primitives.update();
+
 
     ImGui.EndFrame();
     ImGui.Render();

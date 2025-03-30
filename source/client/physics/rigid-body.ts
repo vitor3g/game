@@ -1,11 +1,9 @@
 import * as CANNON from "cannon-es";
-import type { Physics } from "./physics";
 
 export class RigidBody {
   private body: CANNON.Body;
 
   constructor(
-    private readonly g_physics: Physics,
     shape: CANNON.Shape,
     mass: number,
   ) {
@@ -15,7 +13,7 @@ export class RigidBody {
       position: new CANNON.Vec3(0, 0, 0),
     });
 
-    this.g_physics.getWorld().addBody(this.body);
+    g_core.getPhysics().getWorld().addBody(this.body);
   }
 
   public applyCentralForce(force: CANNON.Vec3): void {
@@ -84,7 +82,7 @@ export class RigidBody {
   }
 
   public removeFromWorld(): void {
-    this.g_physics.getWorld().removeBody(this.body);
+    g_core.getPhysics().getWorld().removeBody(this.body);
   }
 
   public lockRotation(x: boolean, y: boolean, z: boolean): void {

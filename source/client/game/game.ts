@@ -1,3 +1,4 @@
+
 export class Game {
   constructor() {}
 
@@ -5,6 +6,20 @@ export class Game {
     g_core
       .getTickManager()
       .subscribe("on-client-render", this.onClientRender.bind(this));
+
+
+    const object = await g_core.getObjects().createObject({
+      modelInfo: {
+        id: 0,
+        path: "data/ebisu/ebisuminami1.glb"
+      }
+    });
+
+    const model = g_core.getModels().getModelById(object.getModelId());
+
+    if (model) {
+      g_core.getGraphics().getRenderer().scene.add(model.getMesh());
+    }
 
     return 1;
   }
@@ -20,6 +35,7 @@ export class Game {
       modelsCount: g_core.getModels().getModelCount(),
       inMemoryObjects: g_core.getObjects().getObjectCount(),
     };
+
 
     g_core
       .getGraphics()

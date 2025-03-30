@@ -1,3 +1,12 @@
+export interface ModelInfoProps {
+  id: number;
+  path: string;
+  scale?: number;
+  rotation?: { x: number; y: number; z: number };
+  position?: { x: number; y: number; z: number };
+}
+
+
 export class ModelInfo {
   public readonly id: number;
   public path: string;
