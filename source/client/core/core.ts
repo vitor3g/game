@@ -3,6 +3,8 @@ import { Game } from "../game/game";
 import { Graphics } from "../graphics/graphics";
 import { Physics } from "../physics/physics";
 import { EntityManager } from "./entity-manager";
+import { Models } from "./models";
+import { Objects } from "./objects";
 import { TickManager } from "./tick-manager";
 
 export class Core {
@@ -12,6 +14,8 @@ export class Core {
   private readonly game: Game;
   private readonly tickManager: TickManager;
   private readonly entityManager: EntityManager;
+  private readonly models: Models;
+  private readonly objects: Objects;
 
   constructor() {
     this.logger = new Logger("dz::core");
@@ -19,6 +23,8 @@ export class Core {
     this.physics = new Physics();
     this.tickManager = new TickManager();
     this.entityManager = new EntityManager(this);
+    this.models = new Models();
+    this.objects = new Objects();
 
     this.game = new Game();
 
@@ -30,12 +36,12 @@ export class Core {
   public async start() {
     this.graphics.start();
 
-    // useful init tick (before be updated with frame-by-frame)
+    // first tick: it is useful (before be updated with frame-by-frame)
     this.tickManager.update(1);
 
     await this.physics.start();
 
-    this.game.init()
+    this.game.init();
   }
 
   public getGraphics() {
@@ -46,12 +52,20 @@ export class Core {
     return this.physics;
   }
 
+  public getModels() {
+    return this.models;
+  }
+
   public getEntityManager() {
     return this.entityManager;
   }
 
   public getTickManager() {
     return this.tickManager;
+  }
+
+  public getObjects() {
+    return this.objects;
   }
 
   public getLogger() {

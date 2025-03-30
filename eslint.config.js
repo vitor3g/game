@@ -36,7 +36,11 @@ export default [
       "@typescript-eslint/prefer-promise-reject-errors": "off",
       "@typescript-eslint/no-redundant-type-constituents": "off",
       "no-empty-function": "off",
-      "@typescript-eslint/no-empty-function": "off"
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+      "no-async-promise-executor": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
     },
   },
 ];

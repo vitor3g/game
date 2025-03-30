@@ -5,23 +5,24 @@ import { Primitives } from "./primitives";
 
 export class Gui {
   private readonly logger: Logger;
+  private io!: ImGui.IO;
   private readonly primitives: Primitives;
 
   constructor(private readonly g_graphics: Graphics) {
     this.logger = new Logger("dz::gui");
     this.primitives = new Primitives();
 
-    this.logger.log("gui")
-  };
+    this.logger.log("gui");
+  }
 
   public async start() {
     await ImGui.default();
 
     ImGui.CHECKVERSION();
     ImGui.CreateContext();
-    const io: ImGui.IO = ImGui.GetIO();
+    this.io = ImGui.GetIO();
     ImGui.StyleColorsDark();
-    io.Fonts.AddFontDefault();
+    this.io.Fonts.AddFontDefault();
 
     ImGui_Impl.Init(this.g_graphics.getRenderer().renderer.domElement);
 
@@ -43,5 +44,9 @@ export class Gui {
 
   public getPrimitiveList() {
     return this.primitives;
+  }
+
+  public getIO() {
+    return this.io;
   }
 }

@@ -17,8 +17,12 @@ export class PrimitiveText extends Primitive<TextPrimitiveProps> {
   render(): void {
     const drawList = ImGui.GetForegroundDrawList();
     const pos = new ImGui.ImVec2(this.props.x, this.props.y);
-    const colorVec4 = this.props.color ? hexToImVec4(this.props.color) : undefined;
-    const colorU32 = colorVec4 ? ImGui.GetColorU32(colorVec4) : ImGui.GetColorU32(ImGui.Col.Text);
+    const colorVec4 = this.props.color
+      ? hexToImVec4(this.props.color)
+      : undefined;
+    const colorU32 = colorVec4
+      ? ImGui.GetColorU32(colorVec4)
+      : ImGui.GetColorU32(ImGui.Col.Text);
 
     drawList.AddText(pos, colorU32, this.props.text);
   }

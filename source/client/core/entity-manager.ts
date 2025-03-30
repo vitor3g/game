@@ -9,17 +9,19 @@ export class EntityManager {
 
   constructor(private readonly g_core: Core) {
     this.logger = new Logger("dz::entity-manager");
-    this.g_core.getTickManager().subscribe("entity-manager-update", this.updateAll.bind(this));
+    this.g_core
+      .getTickManager()
+      .subscribe("entity-manager-update", this.updateAll.bind(this));
   }
 
   public add(entity: Entity<any>): void {
     this.entities.set(entity.id, entity);
-    this.logger.log(SString('%s entity added to queue', entity.id));
+    this.logger.log(SString("%s entity added to queue", entity.id));
   }
 
   public remove(id: string): void {
     this.entities.delete(id);
-    this.logger.log(SString('%s entity removed from queue', id));
+    this.logger.log(SString("%s entity removed from queue", id));
   }
 
   public removeEntity(entity: Entity<any>): void {
@@ -38,8 +40,12 @@ export class EntityManager {
     return Array.from(this.entities.values()).filter((e) => e.hasTag(tag));
   }
 
-  public getByType<T extends Entity<any>>(type: new (...args: any[]) => T): T[] {
-    return Array.from(this.entities.values()).filter(e => e instanceof type) as T[];
+  public getByType<T extends Entity<any>>(
+    type: new (...args: any[]) => T,
+  ): T[] {
+    return Array.from(this.entities.values()).filter(
+      (e) => e instanceof type,
+    ) as T[];
   }
 
   public getAll(): Entity<any>[] {

@@ -20,10 +20,17 @@ export class PrimitiveRectangle extends Primitive<RectanglePrimitiveProps> {
   render(): void {
     const drawList = ImGui.GetForegroundDrawList();
     const pMin = new ImGui.ImVec2(this.props.x, this.props.y);
-    const pMax = new ImGui.ImVec2(this.props.x + this.props.width, this.props.y + this.props.height);
+    const pMax = new ImGui.ImVec2(
+      this.props.x + this.props.width,
+      this.props.y + this.props.height,
+    );
 
-    const colorVec4 = this.props.color ? hexToImVec4(this.props.color) : undefined;
-    const colorU32 = colorVec4 ? ImGui.GetColorU32(colorVec4) : ImGui.GetColorU32(ImGui.Col.Border);
+    const colorVec4 = this.props.color
+      ? hexToImVec4(this.props.color)
+      : undefined;
+    const colorU32 = colorVec4
+      ? ImGui.GetColorU32(colorVec4)
+      : ImGui.GetColorU32(ImGui.Col.Border);
     const thickness = this.props.thickness ?? 1.0;
 
     if (this.props.fill) {

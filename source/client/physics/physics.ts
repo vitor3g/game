@@ -1,43 +1,46 @@
 import { Logger } from "@/common/logger";
-import AmmoFactory from "ammojs-typed";
-import { PhysicsWorld } from "./physics-world";
-
-type AmmoType = Awaited<ReturnType<typeof AmmoFactory>>;
-
+import * as CANNON from "cannon-es";
 
 export class Physics {
-  private physicsWorld: PhysicsWorld;
+  private world!: CANNON.World;
   private readonly logger: Logger;
-
-  private ammoApi!: AmmoType;
+  private readonly bodies: CANNON.Body[] = [];
 
   constructor() {
-    this.physicsWorld = new PhysicsWorld(this);
     this.logger = new Logger("dz::physics-engine");
   }
 
   public async start() {
-    const AmmoModule = await import("ammojs-typed");
-    this.ammoApi = await AmmoModule.default();
+    this.world = new CANNON.World({
+      gravity: new CANNON.Vec3(0, -9.81, 0),
+      allowSleep: true,
+    });
 
+    // tick manager
+    g_core
+      .getTickManager()
+      .subscribe("physics-engine-update", this.update.bind(this));
 
-    this.physicsWorld.create();
-
-    // subscribe to tick-manager
-    g_core.getTickManager().subscribe("physics-engine-update", this.update.bind(this))
-
-    this.logger.log('bullet physics (ammo.js) has been initialized');
+    this.logger.log("cannon-es physics engine has been initialized");
   }
 
   private update(dt: number) {
-    this.physicsWorld.step(dt);
+    const fixedTimeStep = 1.0 / 60.0;
+    const maxSubSteps = 3;
+
+    this.world.step(fixedTimeStep, dt, maxSubSteps);
   }
 
-  public getPhysicsWorld() {
-    return this.physicsWorld;
+  public addBody(body: CANNON.Body) {
+    this.world.addBody(body);
+    this.bodies.push(body);
   }
 
-  public getPhysicsApi() {
-    return this.ammoApi;
+  public getWorld(): CANNON.World {
+    return this.world;
+  }
+
+  public getBodies(): CANNON.Body[] {
+    return this.bodies;
   }
 }

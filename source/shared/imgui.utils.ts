@@ -17,8 +17,8 @@ export function hexToImVec4(hex: string): ImGui.ImVec4 {
     g = parseInt(sanitized.substring(2, 4), 16);
     b = parseInt(sanitized.substring(4, 6), 16);
   } else {
-    g_core.getLogger().error('Invalid hex color format. Use #RRGGBB or #RGB.');
-    throw new Error()
+    g_core.getLogger().error("Invalid hex color format. Use #RRGGBB or #RGB.");
+    throw new Error();
   }
 
   return new ImGui.ImVec4(r / 255, g / 255, b / 255, 1.0);
@@ -27,7 +27,12 @@ export function hexToImVec4(hex: string): ImGui.ImVec4 {
 /**
  * Converts RGBA values (0–255) to ImVec4
  */
-export function rgbaToImVec4(r: number, g: number, b: number, a = 255): ImGui.ImVec4 {
+export function rgbaToImVec4(
+  r: number,
+  g: number,
+  b: number,
+  a = 255,
+): ImGui.ImVec4 {
   return new ImGui.ImVec4(r / 255, g / 255, b / 255, a / 255);
 }
 

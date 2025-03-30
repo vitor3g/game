@@ -19,12 +19,17 @@ export class Primitives {
     return this.list;
   }
 
-  public addText(text: string | number, x: number, y: number, color?: string): void {
+  public addText(
+    text: string | number,
+    x: number,
+    y: number,
+    color?: string,
+  ): void {
     const primitive = new PrimitiveText({
       text: String(text),
       x,
       y,
-      color
+      color,
     });
 
     this.list.push(primitive);
@@ -37,7 +42,7 @@ export class Primitives {
     height: number,
     color?: string,
     fill = false,
-    thickness = 1
+    thickness = 1,
   ): void {
     const primitive = new PrimitiveRectangle({
       x,
@@ -46,7 +51,7 @@ export class Primitives {
       height,
       color,
       fill,
-      thickness
+      thickness,
     });
 
     this.list.push(primitive);

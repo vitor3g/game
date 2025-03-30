@@ -1,4 +1,3 @@
-
 export abstract class Primitive<T> {
   public readonly props: T;
 

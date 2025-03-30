@@ -1,14 +1,8 @@
-import type { RigidBody } from "@/client/physics/rigid-body";
 import { Logger } from "@/common/logger";
 import { SString } from "@/shared/shared.utils";
-import * as THREE from "three";
 import { ulid } from "ulid";
 
-export interface EntityProps {
-  rigidBody?: RigidBody;
-  mesh?: THREE.Mesh;
-  [key: string]: any;
-}
+export type EntityProps = Record<string, any>;
 
 export abstract class Entity<TProps extends EntityProps = EntityProps> {
   protected readonly _id: string;
@@ -50,26 +44,5 @@ export abstract class Entity<TProps extends EntityProps = EntityProps> {
     return this.logger;
   }
 
-
-  public syncFromPhysics(): void {
-    const Ammo = g_core.getPhysics().getPhysicsApi()
-
-    const { rigidBody, mesh } = this.props;
-    if (!rigidBody || !mesh) return;
-
-    const body = rigidBody.getBody();
-    const transform = new Ammo.btTransform();
-    body.getMotionState().getWorldTransform(transform);
-
-    const origin = transform.getOrigin();
-    const rotation = transform.getRotation();
-
-    mesh.position.set(origin.x(), origin.y(), origin.z());
-    mesh.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
-  }
-
-
-  public update(): void {
-    this.syncFromPhysics();
-  }
+  public update(): void {}
 }

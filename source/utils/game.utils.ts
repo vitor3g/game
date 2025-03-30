@@ -14,12 +14,12 @@ export function getParsedIPL(raw: string) {
   const instSection = raw.split(/\n/).slice(1).join("\n").split("end")[0];
   const lines = instSection
     .split("\n")
-    .filter(line => line.trim() && !line.includes("inst"));
+    .filter((line) => line.trim() && !line.includes("inst"));
 
-  const objects: PlacementData[] = lines.map(line => {
+  const objects: PlacementData[] = lines.map((line) => {
     const [id, name, interior, x, y, z, rx, ry, rz, rw, lod] = line
       .split(",")
-      .map(v => v.trim());
+      .map((v) => v.trim());
 
     return {
       id: parseInt(id, 10),
@@ -51,12 +51,12 @@ export function getParsedIDE(raw: string) {
   const instSection = raw.split(/\n/).slice(1).join("\n").split("end")[0];
   const lines = instSection
     .split("\n")
-    .filter(line => line.trim() && !line.includes("objs"));
+    .filter((line) => line.trim() && !line.includes("objs"));
 
-  const objects: DefitionData[] = lines.map(line => {
+  const objects: DefitionData[] = lines.map((line) => {
     const [id, modelName, textureName, animName, drawList] = line
       .split(",")
-      .map(v => v.trim());
+      .map((v) => v.trim());
 
     return {
       id: parseInt(id, 10),
