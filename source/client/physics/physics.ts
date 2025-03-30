@@ -1,6 +1,6 @@
 import { Logger } from "@/common/logger";
+import Ammo from "ammojs-typed";
 import { PhysicsWorld } from "./physics-world";
-
 
 export class Physics {
   private physicsWorld: PhysicsWorld;
@@ -16,8 +16,7 @@ export class Physics {
 
 
   public async start() {
-    const Ammo = await import("ammojs-typed");
-    this.api = await Ammo.default();
+    this.api = await Ammo();
 
     this.physicsWorld.create();
 

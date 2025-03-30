@@ -10,6 +10,9 @@
     ],
     "skipLibCheck": true,
     /* Bundler mode */
+    "typeRoots": [
+      "node_modules/ammojs-typed/ammo/ambient"
+    ],
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
