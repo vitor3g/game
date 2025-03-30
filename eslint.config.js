@@ -34,7 +34,9 @@ export default [
       "@typescript-eslint/no-require-imports": "off",
       "@typescript-eslint/unbound-method": "off",
       "@typescript-eslint/prefer-promise-reject-errors": "off",
-      "@typescript-eslint/no-redundant-type-constituents": "off"
+      "@typescript-eslint/no-redundant-type-constituents": "off",
+      "no-empty-function": "off",
+      "@typescript-eslint/no-empty-function": "off"
     },
   },
 ];

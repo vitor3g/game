@@ -42,6 +42,7 @@
     "@stdlib/string-format": "^0.2.2",
     "@typescript-eslint/eslint-plugin": "^8.22.0",
     "@typescript-eslint/parser": "^8.22.0",
+    "@zhobo63/imgui-ts": "^0.1.46",
     "ammo.js": "^0.0.10",
     "ammojs-typed": "^1.0.6",
     "ammojs3": "^0.0.11",

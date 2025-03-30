@@ -53,6 +53,10 @@ export class Core {
   public getTickManager() {
     return this.tickManager;
   }
+
+  public getLogger() {
+    return this.logger;
+  }
 }
 
 export const CoreModule = () => new Core();
