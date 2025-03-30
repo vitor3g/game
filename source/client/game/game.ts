@@ -11,7 +11,7 @@ export class Game {
     const object = await g_core.getObjects().createObject({
       modelInfo: {
         id: 0,
-        path: "data/ebisu/ebisuminami1.glb"
+        path: "https://storage.googleapis.com/ispeak-bucket/ebisuminami1.glb"
       }
     });
 
