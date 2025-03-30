@@ -9,7 +9,6 @@ export class Physics {
   private physicsWorld: PhysicsWorld;
   private readonly logger: Logger;
 
-  // remove a mutação direta da api
   private ammoApi!: AmmoType;
 
   constructor() {
@@ -19,7 +18,7 @@ export class Physics {
 
   public async start() {
     const AmmoModule = await import("ammojs-typed");
-    this.ammoApi = await AmmoModule.default(); // ✅ CORRETO
+    this.ammoApi = await AmmoModule.default();
 
 
     this.physicsWorld.create();
