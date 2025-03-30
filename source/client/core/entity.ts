@@ -1,14 +1,13 @@
 import type { RigidBody } from "@/client/physics/rigid-body";
 import { Logger } from "@/common/logger";
 import { SString } from "@/shared/shared.utils";
-import Ammo from "ammojs-typed";
 import * as THREE from "three";
 import { ulid } from "ulid";
 
 export interface EntityProps {
   rigidBody?: RigidBody;
   mesh?: THREE.Mesh;
-  [key: string]: any; // permite estender livremente (ex: tags, input, etc)
+  [key: string]: any;
 }
 
 export abstract class Entity<TProps extends EntityProps = EntityProps> {
@@ -16,7 +15,6 @@ export abstract class Entity<TProps extends EntityProps = EntityProps> {
   private readonly logger: Logger;
   public readonly props: TProps;
 
-  // Ex: ["vehicle", "player", "dynamic"]
   public readonly tags = new Set<string>();
 
   get id(): string {
@@ -52,10 +50,10 @@ export abstract class Entity<TProps extends EntityProps = EntityProps> {
     return this.logger;
   }
 
-  /**
-   * Atualiza a posição da malha com base na física (se houver).
-   */
+
   public syncFromPhysics(): void {
+    const Ammo = g_core.getPhysics().getPhysicsApi()
+
     const { rigidBody, mesh } = this.props;
     if (!rigidBody || !mesh) return;
 
@@ -70,9 +68,7 @@ export abstract class Entity<TProps extends EntityProps = EntityProps> {
     mesh.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
   }
 
-  /**
-   * Atualização por frame. Pode ser sobrescrita.
-   */
+
   public update(): void {
     this.syncFromPhysics();
   }

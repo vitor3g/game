@@ -2,10 +2,10 @@
 
 
 import * as THREE from "three";
+import { ObjectEntity } from "../core/entities/object.entity";
 import { RigidBody } from "../physics/rigid-body";
 
 export class Game {
-  private readonly dynamicObjects: { body: RigidBody; mesh: THREE.Mesh }[] = [];
 
   constructor() {
     //
@@ -40,24 +40,13 @@ export class Game {
     );
     scene.add(boxMesh);
 
-    this.dynamicObjects.push({ body: boxBody, mesh: boxMesh });
+    const groundEntity = new ObjectEntity({ rigidBody: groundBody, mesh: groundMesh });
+    const boxEntity = new ObjectEntity({ rigidBody: boxBody, mesh: boxMesh });
 
-    g_core.getTickManager().subscribe("game-sync-physics", this.syncPhysics.bind(this))
-  }
+    groundEntity.addTag('static')
+    boxEntity.addTag('static')
 
-  private syncPhysics() {
-    const physics = g_core.getPhysics();
-    const Ammo = physics.getPhysicsApi();
-
-    for (const { body, mesh } of this.dynamicObjects) {
-      const transform = new Ammo.btTransform();
-      body.getBody().getMotionState().getWorldTransform(transform);
-
-      const origin = transform.getOrigin();
-      const rotation = transform.getRotation();
-
-      mesh.position.set(origin.x(), origin.y(), origin.z());
-      mesh.quaternion.set(rotation.x(), rotation.y(), rotation.z(), rotation.w());
-    }
+    g_core.getEntityManager().add(groundEntity);
+    g_core.getEntityManager().add(boxEntity)
   }
 }
