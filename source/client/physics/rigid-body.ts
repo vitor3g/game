@@ -4,14 +4,18 @@ export class RigidBody {
   private body: CANNON.Body;
 
   constructor(
-    shape: CANNON.Shape,
-    mass: number,
+    shapeOrBody: CANNON.Shape | CANNON.Body,
+    mass = 0
   ) {
-    this.body = new CANNON.Body({
-      mass,
-      shape,
-      position: new CANNON.Vec3(0, 0, 0),
-    });
+    if (shapeOrBody instanceof CANNON.Body) {
+      this.body = shapeOrBody;
+    } else {
+      this.body = new CANNON.Body({
+        mass,
+        shape: shapeOrBody,
+        position: new CANNON.Vec3(0, 0, 0),
+      });
+    }
 
     g_core.getPhysics().getWorld().addBody(this.body);
   }
@@ -22,6 +26,10 @@ export class RigidBody {
 
   public applyImpulse(impulse: CANNON.Vec3, relPos: CANNON.Vec3): void {
     this.body.applyImpulse(impulse, relPos);
+  }
+
+  public disableCollision(): void {
+    this.body.collisionFilterMask = 0;
   }
 
   public getPosition(): CANNON.Vec3 {

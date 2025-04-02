@@ -15,7 +15,7 @@ export class Gui {
     this.logger.log("gui");
   }
 
-  public async start(canvas: HTMLCanvasElement) {
+  public async start() {
     await ImGui.default();
 
     ImGui.CHECKVERSION();
@@ -24,10 +24,9 @@ export class Gui {
     ImGui.StyleColorsDark();
     this.io.Fonts.AddFontDefault();
 
+    ImGui_Impl.Init(this.g_graphics.getRenderer().renderer.domElement);
 
-    ImGui_Impl.Init(canvas);
-
-    window.requestAnimationFrame(this.update.bind(this))
+    g_core.getTickManager().subscribe("gui-update", this.update.bind(this));
   }
 
   public update(dt: number) {
@@ -39,15 +38,9 @@ export class Gui {
     ImGui.EndFrame();
     ImGui.Render();
 
-    g_core.getTickManager().update(dt);
+    this.g_graphics.getRenderer().renderer.resetState();
 
-    this.g_graphics.getRenderer().renderer.render(this.g_graphics.getRenderer().getScene(), this.g_graphics.getRenderer().getCamera());
     ImGui_Impl.RenderDrawData(ImGui.GetDrawData());
-
-    this.g_graphics.getRenderer().getCamera().updateProjectionMatrix()
-    this.g_graphics.getRenderer().renderer.state.reset();
-
-    window.requestAnimationFrame(this.update.bind(this))
   }
 
   public getPrimitiveList() {

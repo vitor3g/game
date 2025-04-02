@@ -22,6 +22,9 @@ export class ObjectEntity extends Entity<ObjectEntityProps> {
     return this.props.rigidBody;
   }
 
+
+
+
   public override update(): void {
     const { mesh } = this.props;
     if (!mesh || !this.props.rigidBody) return;

@@ -1,27 +1,15 @@
 import { SString } from "@/shared/shared.utils";
 import * as THREE from "three";
 import { OrbitControls, RoomEnvironment } from "three/examples/jsm/Addons.js";
-import type { Graphics } from "./graphics";
-import { Gui } from "./gui/gui";
+import { Graphics } from "./graphics";
 
 export class Renderer {
-  public scene!: THREE.Scene;
-  public camera!: THREE.PerspectiveCamera;
-  public renderer!: THREE.WebGLRenderer;
-  private controls!: OrbitControls;
-  private gui: Gui
+  public scene: THREE.Scene;
+  public camera: THREE.PerspectiveCamera;
+  public renderer: THREE.WebGLRenderer;
+  private controls: OrbitControls;
 
   constructor(private readonly g_graphics: Graphics) {
-    this.gui = new Gui(this.g_graphics);
-  }
-
-  public async start() {
-    const canvas = document.querySelector("canvas")
-
-    if (!canvas) return;
-
-    await this.gui.start(canvas);
-
     this.scene = new THREE.Scene();
 
     this.camera = new THREE.PerspectiveCamera(
@@ -33,7 +21,7 @@ export class Renderer {
 
     this.camera.position.z = 5;
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false, powerPreference: "high-performance", canvas: canvas });
+    this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false, powerPreference: "high-performance" });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -50,11 +38,28 @@ export class Renderer {
     this.controls.dampingFactor = 0.25;
     this.controls.screenSpacePanning = false;
 
-    //this.renderer.setAnimationLoop((dt) => this.update(dt));
+    //const { x, y, z } = convertFromIPLtoThreeJS(1255.729, 164.897, 1000);
+    //
+    //// Define a posição inicial da câmera
+    //this.camera.position.set(x, y, z);
+    //
+    //// Atualiza os controles para refletirem essa posição
+    //this.controls.target.set(0, 0, 0); // Ajuste conforme necessário
+    //this.controls.update();
+  }
+
+  public start() {
+    this.renderer.setAnimationLoop((dt) => this.animate(dt));
+
     document.body.appendChild(this.renderer.domElement);
+
     window.addEventListener("resize", this.onWindowResize);
   }
 
+  private animate(dt: number): void {
+    this.renderer.render(this.scene, this.camera);
+    g_core.getTickManager().update(dt);
+  }
 
   private onWindowResize = (): void => {
     this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -67,16 +72,4 @@ export class Renderer {
         SString("Game Viewport has resized with aspect %s", this.camera.aspect),
       );
   };
-
-  public getScene() {
-    return this.scene;
-  }
-
-  public getCamera() {
-    return this.camera;
-  }
-
-  public getGUI() {
-    return this.gui;
-  }
 }
