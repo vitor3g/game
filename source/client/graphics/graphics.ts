@@ -11,7 +11,7 @@ export class Graphics {
   }
 
   public async start() {
-    this.renderer.start();
+    await this.renderer.start();
   }
 
   public getLogger() {

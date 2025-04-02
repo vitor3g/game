@@ -15,10 +15,12 @@ export class Renderer {
     this.gui = new Gui(this.g_graphics);
   }
 
-  public start() {
+  public async start() {
     const canvas = document.querySelector("canvas")
 
     if (!canvas) return;
+
+    await this.gui.start(canvas);
 
     this.scene = new THREE.Scene();
 
@@ -48,14 +50,11 @@ export class Renderer {
     this.controls.dampingFactor = 0.25;
     this.controls.screenSpacePanning = false;
 
-    this.renderer.setAnimationLoop((dt) => this.update(dt));
+    //this.renderer.setAnimationLoop((dt) => this.update(dt));
     document.body.appendChild(this.renderer.domElement);
     window.addEventListener("resize", this.onWindowResize);
   }
 
-  private update(dt: number): void {
-    this.gui.update(dt, this.scene, this.camera);
-  }
 
   private onWindowResize = (): void => {
     this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -68,4 +67,16 @@ export class Renderer {
         SString("Game Viewport has resized with aspect %s", this.camera.aspect),
       );
   };
+
+  public getScene() {
+    return this.scene;
+  }
+
+  public getCamera() {
+    return this.camera;
+  }
+
+  public getGUI() {
+    return this.gui;
+  }
 }

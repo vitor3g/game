@@ -34,7 +34,7 @@ export class Core {
   }
 
   public async start() {
-    this.graphics.start();
+    await this.graphics.start();
 
     // first tick: it is useful (before be updated with frame-by-frame)
     this.tickManager.update(1);

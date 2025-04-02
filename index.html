@@ -3,8 +3,35 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="stylesheet" href="source/styles/global.css" />
   <title>drift.zone</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      /* <- isso é essencial */
+    }
+
+    body {
+      position: fixed;
+      /* <- impede qualquer scroll */
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      /* <- garante largura total da viewport */
+      height: 100vh;
+      /* <- garante altura total da viewport */
+    }
+  </style>
 </head>
 
 <body>
