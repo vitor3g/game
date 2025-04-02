@@ -1,5 +1,6 @@
 import { Logger } from "@/common/logger";
 import { ImGui, ImGui_Impl } from "@zhobo63/imgui-ts";
+import * as THREE from "three";
 import type { Graphics } from "../graphics";
 import { Primitives } from "./primitives";
 
@@ -15,33 +16,38 @@ export class Gui {
     this.logger.log("gui");
   }
 
-  public async start() {
+  public async start(canvas: HTMLCanvasElement) {
     await ImGui.default();
 
-    ImGui.CHECKVERSION();
     ImGui.CreateContext();
-    this.io = ImGui.GetIO();
+    ImGui_Impl.Init(canvas);
+
     ImGui.StyleColorsDark();
-    this.io.Fonts.AddFontDefault();
 
-    ImGui_Impl.Init(this.g_graphics.getRenderer().renderer.domElement);
 
-    g_core.getTickManager().subscribe("gui-update", this.update.bind(this));
+    //this.io = ImGui.GetIO();
+    //
+    //window.requestAnimationFrame(this.update.bind(this))
   }
 
-  public update(dt: number) {
-    this.g_graphics.getRenderer().renderer.state.reset();
+  public update(dt: number, scene: THREE.Scene, camera: THREE.Camera) {
     ImGui_Impl.NewFrame(dt);
     ImGui.NewFrame();
 
 
-    this.primitives.update();
+    //this.primitives.update();
 
 
     ImGui.EndFrame();
     ImGui.Render();
 
+    this.g_graphics.getRenderer().renderer.render(scene, camera);
+    g_core.getTickManager().update(dt);
+
     ImGui_Impl.RenderDrawData(ImGui.GetDrawData());
+
+
+    this.g_graphics.getRenderer().renderer.state.reset();
   }
 
   public getPrimitiveList() {

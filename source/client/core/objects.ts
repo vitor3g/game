@@ -33,7 +33,7 @@ export class Objects {
     const rigidBody = new RigidBody(shape, params.mass ?? 0);
 
     const objectId = this.idCounter++;
-    const entity = new ObjectEntity({ objectId, modelId: model.modelInfo.id, rigidBody, });
+    const entity = new ObjectEntity({ objectId, modelId: model.modelInfo.id, rigidBody, mesh });
 
     this.entities.set(objectId, entity);
     return entity;

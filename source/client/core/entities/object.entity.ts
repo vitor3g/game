@@ -1,10 +1,12 @@
 import { RigidBody } from "@/client/physics/rigid-body";
+import type { Object3D } from "three";
 import { Entity, type EntityProps } from "../entity";
 
 export type ObjectEntityProps = EntityProps & {
   objectId: number;
   modelId: number;
   rigidBody: RigidBody;
+  mesh: Object3D
 };
 
 export class ObjectEntity extends Entity<ObjectEntityProps> {
@@ -27,6 +29,7 @@ export class ObjectEntity extends Entity<ObjectEntityProps> {
     const body = this.props.rigidBody.getBody();
     mesh.position.copy(body.position);
     mesh.quaternion.copy(body.quaternion);
+
 
     super.update();
   }

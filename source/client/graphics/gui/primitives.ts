@@ -56,4 +56,15 @@ export class Primitives {
 
     this.list.push(primitive);
   }
+
+  private logLines: string[] = [];
+
+  public getLogLines() {
+    return this.logLines;
+  }
+
+  public addLogLine(line: string) {
+    this.logLines.push(line);
+    if (this.logLines.length > 1000) this.logLines.shift(); // mantém o tamanho limitado
+  }
 }
