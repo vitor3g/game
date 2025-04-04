@@ -69,35 +69,3 @@ export function getParsedIDE(raw: string) {
 
   return objects;
 }
-
-// export async function GetMapDefinition() {
-//   const data: DefitionData[] = [];
-
-//   for (const def of []) {
-//     for (const ide of def.ides) {
-//       const response = await fetch(`/data/maps/${def.section}/${ide}`);
-//       const raw = await response.text();
-//       const parser = getParsedIDE(raw);
-
-//       data.push(...parser);
-//     }
-//   }
-
-//   return data;
-// }
-
-// export async function GetMapPlacement() {
-//   const data: PlacementData[] = [];
-
-//   for (const def of []) {
-//     for (const ipl of def.ipls) {
-//       const response = await fetch(`/data/maps/${def.section}/${ipl}`);
-//       const raw = await response.text();
-//       const parser = getParsedIPL(raw);
-
-//       data.push(...parser);
-//     }
-//   }
-
-//   return data;
-// }

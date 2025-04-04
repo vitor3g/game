@@ -17,7 +17,7 @@ export function hexToImVec4(hex: string): ImGui.ImVec4 {
     g = parseInt(sanitized.substring(2, 4), 16);
     b = parseInt(sanitized.substring(4, 6), 16);
   } else {
-    g_core.getLogger().error("Invalid hex color format. Use #RRGGBB or #RGB.");
+    g_core.getCoreLogger().error("Invalid hex color format. Use #RRGGBB or #RGB.");
     throw new Error();
   }
 
