@@ -66,7 +66,7 @@ export class VehiclePhysics {
     });
   }
 
-  private addWheel(pos: CANNON.Vec3, material: CANNON.Material, scene: THREE.Scene): void {
+  private addWheel(pos: CANNON.Vec3, _material: CANNON.Material, scene: THREE.Scene): void {
     const options = {
       radius: this.wheelRadius,
       directionLocal: new CANNON.Vec3(0, -1, 0),
