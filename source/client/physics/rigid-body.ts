@@ -17,7 +17,7 @@ export class RigidBody {
       });
     }
 
-    g_core.getPhysics().getWorld().addBody(this.body);
+    g_core.getGame().getPhysics().getWorld().addBody(this.body);
   }
 
   public applyCentralForce(force: CANNON.Vec3): void {
@@ -90,7 +90,7 @@ export class RigidBody {
   }
 
   public removeFromWorld(): void {
-    g_core.getPhysics().getWorld().removeBody(this.body);
+    g_core.getGame().getPhysics().getWorld().removeBody(this.body);
   }
 
   public lockRotation(x: boolean, y: boolean, z: boolean): void {

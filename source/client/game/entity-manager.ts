@@ -1,17 +1,17 @@
 import { Logger } from "@/common/logger";
 import { SString } from "@/shared/shared.utils";
-import type { Core } from "./core";
 import type { Entity } from "./entity";
 
 export class EntityManager {
   private readonly logger: Logger;
   private readonly entities = new Map<string, Entity<any>>();
 
-  constructor(private readonly g_core: Core) {
+  constructor() {
     this.logger = new Logger("dz::entity-manager");
-    this.g_core
-      .getTickManager()
-      .subscribe("entity-manager-update", this.updateAll.bind(this));
+  }
+
+  public start() {
+    g_core.getGraphics().getTickManager().subscribe("entity-manager-update", this.updateAll.bind(this));
   }
 
   public add(entity: Entity<any>): void {

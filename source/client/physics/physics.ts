@@ -17,7 +17,7 @@ export class Physics {
     });
 
     // tick manager
-    g_core
+    g_core.getGraphics()
       .getTickManager()
       .subscribe("physics-engine-update", this.update.bind(this));
 

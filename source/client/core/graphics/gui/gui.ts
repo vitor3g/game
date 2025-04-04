@@ -26,7 +26,7 @@ export class Gui {
 
     ImGui_Impl.Init(this.g_graphics.getRenderer().renderer.domElement);
 
-    g_core.getTickManager().subscribe("gui-update", this.update.bind(this));
+    g_core.getGraphics().getTickManager().subscribe("gui-update", this.update.bind(this));
   }
 
   public update(dt: number) {

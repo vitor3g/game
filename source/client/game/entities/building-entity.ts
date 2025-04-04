@@ -1,15 +1,14 @@
+import type { BuildingCollider } from "@/client/physics/building-collider";
 import { RigidBody } from "@/client/physics/rigid-body";
 import type { Object3D } from "three";
 import { Entity, type EntityProps } from "../entity";
 
 export type ObjectEntityProps = EntityProps & {
-  objectId: number;
-  modelId: number;
-  rigidBody: RigidBody;
+  collider: BuildingCollider;
   mesh: Object3D
 };
 
-export class ObjectEntity extends Entity<ObjectEntityProps> {
+export class BuildingEntity extends Entity<ObjectEntityProps> {
   constructor(props: ObjectEntityProps, id?: string) {
     super(props, id);
   }
@@ -23,16 +22,13 @@ export class ObjectEntity extends Entity<ObjectEntityProps> {
   }
 
 
-
-
   public override update(): void {
     const { mesh } = this.props;
-    if (!mesh || !this.props.rigidBody) return;
+    if (!mesh || !this.props.collider) return;
 
-    const body = this.props.rigidBody.getBody();
+    const body = this.props.collider.getBody();
     mesh.position.copy(body.position);
     mesh.quaternion.copy(body.quaternion);
-
 
     super.update();
   }

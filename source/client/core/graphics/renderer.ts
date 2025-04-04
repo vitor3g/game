@@ -37,15 +37,6 @@ export class Renderer {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.25;
     this.controls.screenSpacePanning = false;
-
-    //const { x, y, z } = convertFromIPLtoThreeJS(1255.729, 164.897, 1000);
-    //
-    //// Define a posição inicial da câmera
-    //this.camera.position.set(x, y, z);
-    //
-    //// Atualiza os controles para refletirem essa posição
-    //this.controls.target.set(0, 0, 0); // Ajuste conforme necessário
-    //this.controls.update();
   }
 
   public start() {
@@ -58,7 +49,7 @@ export class Renderer {
 
   private animate(dt: number): void {
     this.renderer.render(this.scene, this.camera);
-    g_core.getTickManager().update(dt);
+    this.g_graphics.getTickManager().update(dt);
   }
 
   private onWindowResize = (): void => {
