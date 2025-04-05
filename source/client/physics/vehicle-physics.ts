@@ -47,8 +47,18 @@ export class VehiclePhysics {
     const shape = new CANNON.Box(new CANNON.Vec3(1, 0.5, 2));
     const body = new CANNON.Body({ mass: 150, material });
     body.addShape(shape);
-    body.position.set(0, 0.5, 0);
+    body.position.set(0, 10, 0);
     return body;
+  }
+
+  public getSpeed(): number {
+    const velocity = this.chassisBody.velocity;
+    return velocity.length();
+  }
+
+  public getSpeedKmh(): number {
+    const speedMps = this.chassisBody.velocity.length();
+    return speedMps * 3.6;
   }
 
   private createChassisMesh(): THREE.Mesh {
@@ -65,6 +75,11 @@ export class VehiclePhysics {
       indexForwardAxis: 2,
     });
   }
+
+  public getChassisMesh() {
+    return this.chassisMesh;
+  }
+
 
   private addWheel(pos: CANNON.Vec3, _material: CANNON.Material, scene: THREE.Scene): void {
     const options = {

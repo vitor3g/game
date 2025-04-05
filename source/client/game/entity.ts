@@ -44,5 +44,6 @@ export abstract class Entity<TProps extends EntityProps = EntityProps> {
     return this.logger;
   }
 
-  public update(): void {}
+  public update(): void {
+  }
 }

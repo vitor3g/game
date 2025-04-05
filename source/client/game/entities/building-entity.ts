@@ -14,7 +14,7 @@ export class BuildingEntity extends Entity<ObjectEntityProps> {
   }
 
   public getModelId() {
-    return this.props.modelId;
+    return this.id;
   }
 
   public getRigidBody(): RigidBody {

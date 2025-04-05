@@ -36,8 +36,8 @@ export class EntityManager {
     return this.entities.get(id);
   }
 
-  public getByTag(tag: string): Entity<any>[] {
-    return Array.from(this.entities.values()).filter((e) => e.hasTag(tag));
+  public getByTag<T>(tag: string): T[] {
+    return Array.from(this.entities.values()).filter((e) => e.hasTag(tag)) as T[];
   }
 
   public getByType<T extends Entity<any>>(

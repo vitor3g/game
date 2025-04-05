@@ -1,4 +1,5 @@
 import CannonDebugger from 'cannon-es-debugger';
+import { VehicleEntity } from './entities/vehicle-entity';
 
 
 export class Debug {
@@ -25,6 +26,11 @@ export class Debug {
         },
         active: g_core.getKeybinds().getActiveKeys(),
         pressed: g_core.getKeybinds().getCurrentKeyPressed()
+      },
+
+      currentVehicle: {
+        speed: g_core.getGame().getEntityManager().getByTag<VehicleEntity>('vehicle')[0].getSpeed(),
+        speedKmh: `${Math.floor(g_core.getGame().getEntityManager().getByTag<VehicleEntity>('vehicle')[0].getSpeedKmh())}/kmh`
       },
       buildings: g_core.getGame().getBuildings().getBuildingsCount(),
     };

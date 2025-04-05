@@ -1,13 +1,12 @@
 import { SString } from "@/shared/shared.utils";
 import * as THREE from "three";
-import { OrbitControls, RoomEnvironment } from "three/examples/jsm/Addons.js";
+import { RoomEnvironment } from "three/examples/jsm/Addons.js";
 import { Graphics } from "./graphics";
 
 export class Renderer {
   public scene: THREE.Scene;
   public camera: THREE.PerspectiveCamera;
   public renderer: THREE.WebGLRenderer;
-  private controls: OrbitControls;
 
   constructor(private readonly g_graphics: Graphics) {
     this.scene = new THREE.Scene();
@@ -33,10 +32,15 @@ export class Renderer {
       0.04,
     ).texture;
 
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.25;
-    this.controls.screenSpacePanning = false;
+
+    document.addEventListener("click", () => {
+      document.body.requestPointerLock();
+    });
+    //this.controls = new PointerLockControls(this.camera, this.renderer.domElement);
+    //
+    //document.addEventListener("click", () => {
+    //  this.controls.lock();
+    //});
   }
 
   public start() {

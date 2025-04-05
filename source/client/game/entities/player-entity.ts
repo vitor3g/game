@@ -1,5 +1,5 @@
 import { Entity } from "../entity";
-import { PlayerController } from "../player-controller";
+import type { PlayerController } from "../player-controller";
 import type { VehicleEntity } from "./vehicle-entity";
 
 export interface PlayerEntityProps {
@@ -11,13 +11,15 @@ export interface PlayerEntityProps {
 export class PlayerEntity extends Entity<PlayerEntityProps> {
   constructor(props: PlayerEntityProps, id?: string) {
     super(props, id)
-
-    this.props.controller = new PlayerController(this);
   }
 
   public spawn() {
     g_core.getGame().getEntityManager().add(this);
     g_core.getGame().getEntityManager().add(this.props.vehicle);
+  }
+
+  public setController(controller: PlayerController) {
+    this.props.controller = controller;
   }
 
   public getVehicle() {
