@@ -1,5 +1,9 @@
 import { AssetType } from "../core/AssetManager";
+import { SoundType } from "../core/AudioManager";
 import type { ContextLogger } from "../core/Console";
+import type { IGameEntity } from "../ecs/interfaces";
+import { FollowCameraComponent } from "./Camera/FollowCameraComponent";
+import { GeometryComponent } from "./SampleGeometry/GeometryComponent";
 import { SkyEntity } from "./Sky/SkyEntity";
 import { World } from "./World";
 
@@ -9,14 +13,49 @@ export class Game {
 
   // Entities
   private readonly skyEntity: SkyEntity;
+  private readonly boxEntity: IGameEntity;
+  private readonly cameraEntity: IGameEntity;
 
   constructor() {
     this.logger = g_core.getConsole().NewLoggerCtx("dz::game")
     this.gameWorld = new World("game-world", g_core.getGraphics().getRendererScene());
 
-    // Entities
+    /*
+      Entities
+    */
     this.skyEntity = new SkyEntity(this.gameWorld);
     this.gameWorld.addEntity(this.skyEntity);
+
+    // Debug Box
+    this.boxEntity = this.gameWorld.createEntity("BoxEntity");
+    const geometryComponent = new GeometryComponent(this.boxEntity);
+    this.boxEntity.addComponent(geometryComponent);
+
+    // Default Camera
+    this.cameraEntity = this.gameWorld.createEntity("DefaultCamera");
+    const followCameraComponent = new FollowCameraComponent(this.cameraEntity);
+
+    followCameraComponent.setSettings({
+      height: 2.5,
+      rotationSpeed: 0.3,
+      smoothFactor: 4.0,
+      initialDistanceMode: "close",
+      minPolarAngle: 10,
+      maxPolarAngle: 80,
+      fov: 75
+    })
+
+    followCameraComponent.setTarget(this.boxEntity);
+
+    this.cameraEntity.addComponent(followCameraComponent)
+  }
+
+
+  public async start() {
+    await g_core.getAudioManager().load("/data/sounds/ui/change.wav", {
+      type: SoundType.UI,
+      key: 'ui-change'
+    })
 
 
     g_core.getAssetManager().register("gt86", "/data/vehicles/gt86.glb", AssetType.MODEL_GLTF);
@@ -32,9 +71,7 @@ export class Game {
 
     g_core.getAssetManager().loadGroup("vehicles");
     g_core.getAssetManager().loadGroup("wheels");
-  }
 
-  public start() {
     g_core.getInteralNetwork().on("asset.all.loaded", () => {
       this.gameWorld.initialize();
 

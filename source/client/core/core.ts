@@ -1,6 +1,7 @@
 import { Game } from "../game/Game";
 import { Graphics } from "../graphics/Graphics";
 import { AssetManager } from "./AssetManager";
+import { AudioManager } from "./AudioManager";
 import { Console, type ContextLogger } from "./Console";
 import { InternalNetwork } from "./InternalNetwork";
 import { Keybinds } from "./Keybindings";
@@ -13,6 +14,7 @@ export class Core {
   private readonly console: Console;
   private readonly internalNetwork: InternalNetwork;
   private readonly assetManager: AssetManager;
+  private readonly audioManager: AudioManager;
 
   constructor() {
     window.g_core = this;
@@ -22,17 +24,18 @@ export class Core {
 
     this.graphics = new Graphics();
     this.assetManager = new AssetManager();
+    this.audioManager = new AudioManager();
     this.keybinds = new Keybinds();
     this.game = new Game()
 
-    this.internalNetwork.setDebugMode(true);
+    this.internalNetwork.setDebugMode(false);
 
     this.logger.log("Core");
   }
 
   public async start() {
     this.graphics.start();
-    this.game.start();
+    await this.game.start();
   }
 
   public getGraphics() {
@@ -57,6 +60,10 @@ export class Core {
 
   public getKeybinds() {
     return this.keybinds;
+  }
+
+  public getAudioManager() {
+    return this.audioManager;
   }
 
   public getAssetManager() {
