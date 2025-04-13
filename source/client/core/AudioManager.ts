@@ -177,11 +177,11 @@ export class AudioManager {
       this.resumeAll();
     });
 
-    g_core.getInteralNetwork().on('game.pause', () => {
+    g_core.getInternalNet().on('game.pause', () => {
       this.pauseAll(SoundType.MUSIC);
     });
 
-    g_core.getInteralNetwork().on('game.resume', () => {
+    g_core.getInternalNet().on('game.resume', () => {
       this.resumeAll(SoundType.MUSIC);
     });
   }
@@ -379,7 +379,7 @@ export class AudioManager {
 
     sound.play();
 
-    g_core.getInteralNetwork().emit('audio.engine.setup', {
+    g_core.getInternalNet().emit('audio.engine.setup', {
       vehicle: vehicleObj,
       sound: sound
     });

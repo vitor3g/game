@@ -29,4 +29,5 @@ export enum CommonEvents {
 
   // Game Events
   EVENT_UPDATE = "onGameUpdate",
+  EVENT_WORLD_INIT = "onWorldInitialized"
 }

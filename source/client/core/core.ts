@@ -3,6 +3,7 @@ import { Graphics } from "../graphics/Graphics";
 import { AssetManager } from "./AssetManager";
 import { AudioManager } from "./AudioManager";
 import { Console, type ContextLogger } from "./Console";
+import { Debug } from "./Debug";
 import { InternalNetwork } from "./InternalNetwork";
 import { Keybinds } from "./Keybindings";
 
@@ -15,6 +16,7 @@ export class Core {
   private readonly internalNetwork: InternalNetwork;
   private readonly assetManager: AssetManager;
   private readonly audioManager: AudioManager;
+  private readonly debug: Debug;
 
   constructor() {
     window.g_core = this;
@@ -27,6 +29,7 @@ export class Core {
     this.audioManager = new AudioManager();
     this.keybinds = new Keybinds();
     this.game = new Game()
+    this.debug = new Debug();
 
     this.internalNetwork.setDebugMode(false);
 
@@ -42,6 +45,10 @@ export class Core {
     return this.graphics;
   }
 
+  public getDebug() {
+    return this.debug;
+  }
+
   public getGame() {
     return this.game;
   }
@@ -54,7 +61,7 @@ export class Core {
     return this.logger;
   }
 
-  public getInteralNetwork() {
+  public getInternalNet() {
     return this.internalNetwork;
   }
 

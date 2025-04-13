@@ -127,11 +127,11 @@ export abstract class BaseScript implements IGameScript {
   }
 
   sendEvent(eventName: string, data?: any): void {
-    g_core.getInteralNetwork().emit(eventName, data);
+    g_core.getInternalNet().emit(eventName, data);
   }
 
 
   listenEvent(eventName: string, callback: (data: any) => void): void {
-    g_core.getInteralNetwork().on(eventName, callback);
+    g_core.getInternalNet().on(eventName, callback);
   }
 }

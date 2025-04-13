@@ -153,7 +153,7 @@ export class FollowCameraComponent extends BaseComponent {
    */
   private setupInputListeners(): void {
     // Keyboard listeners
-    g_core.getInteralNetwork().on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
+    g_core.getInternalNet().on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
       // Exit pointer lock with Escape key
       if (key === KeyboardKeys.Escape && this.isPointerLocked) {
         document.exitPointerLock();
@@ -162,8 +162,6 @@ export class FollowCameraComponent extends BaseComponent {
       // Toggle between distance presets with V key
       if (key === KeyboardKeys.KeyV) {
         this.cycleDistanceMode();
-        g_core.getAudioManager().play('ui-change')
-
       }
     });
   }
@@ -197,6 +195,9 @@ export class FollowCameraComponent extends BaseComponent {
         this.logger.debug('Camera distance: Close');
         break;
     }
+
+    g_core.getAudioManager().play('ui-change')
+
 
     // Start the transition
     this.isTransitioning = true;

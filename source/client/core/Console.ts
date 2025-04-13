@@ -116,21 +116,18 @@ export class Console {
       }
     ]);
 
-
-
-    g_core.getInteralNetwork().on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
+    g_core.getInternalNet().on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
       if (key === KeyboardKeys.F8) {
         this.toggle();
+        this.clearInputBuffer();
       }
     });
 
-    g_core.getInteralNetwork().on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
+    g_core.getInternalNet().on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
       if (key === KeyboardKeys.Enter && this.isOpen && this.inputBuffer.trim() !== "") {
-        if (this.inputBuffer.trim().startsWith("/")) {
-          const currentCommand = this.inputBuffer;
-          this.clearInputBuffer();
-          this.executeCommand(currentCommand);
-        }
+        const currentCommand = this.inputBuffer;
+        this.executeCommand(currentCommand);
+        this.clearInputBuffer();
       }
     });
   }
@@ -212,7 +209,7 @@ export class Console {
 
   private cmdLogLevel(args: string[]): void {
     if (args.length === 0) {
-      this.error("Usage: log level <level 1> <level 2> ... (available levels: log, error, warn, debug, verbose, fatal)");
+      this.error("Usage: loglevel <level 1> <level 2> ... (available levels: log, error, warn, debug, verbose, fatal)");
       return;
     }
 
@@ -311,31 +308,25 @@ export class Console {
 
     this.addMessage(`> ${input}`, this.commandColor);
 
-    // Remover a barra inicial se presente
-    let command: string;
-    let args: string[];
+    // Parse command and arguments
+    const parts = input.split(" ");
 
-    if (input.startsWith("/")) {
-      const parts = input.substring(1).split(" ");
-      command = parts[0];
-      args = parts.slice(1);
-    } else {
-      const parts = input.split(" ");
-      command = parts[0];
-      args = parts.slice(1);
-    }
+    // Remove leading slash if present
+    const command = parts[0];
+
+    const args = parts.slice(1);
 
     if (this.commands[command]) {
       this.commands[command].callback(args);
     } else {
-      this.error(`Unknown command: ${command}. Type /help to see the list of commands.`);
+      this.error(`Unknown command: ${command}. Type help to see the list of commands.`);
     }
   }
 
   public cmdHelp(): void {
     this.log("Available commands:");
     for (const cmd in this.commands) {
-      this.log(`  /${cmd} - ${this.commands[cmd].description}`);
+      this.log(`  ${cmd} - ${this.commands[cmd].description}`);
     }
   }
 
@@ -510,20 +501,10 @@ export class Console {
         ImGui.InputTextFlags.CallbackHistory |
         ImGui.InputTextFlags.EnterReturnsTrue;
 
+
       ImGui.InputText("##input", inputText, inputTextFlags);
       this.inputBuffer = inputText.buffer;
 
-      if (ImGui.IsItemFocused() &&
-        (ImGui.IsKeyPressed(ImGui.GetKeyIndex(ImGui.Key.UpArrow)) ||
-          ImGui.IsKeyPressed(ImGui.GetKeyIndex(ImGui.Key.DownArrow)))) {
-        const direction = ImGui.IsKeyPressed(ImGui.GetKeyIndex(ImGui.Key.UpArrow)) ? -1 : 1;
-        this.navigateHistory(direction);
-      }
-
-      ImGui.SetItemDefaultFocus();
-      if (ImGui.IsWindowAppearing()) {
-        ImGui.SetKeyboardFocusHere(-1);
-      }
 
       ImGui.PopItemWidth();
 

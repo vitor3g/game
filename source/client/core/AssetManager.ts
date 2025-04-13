@@ -75,7 +75,7 @@ export class AssetManager {
       const percentage = Math.round((itemsLoaded / itemsTotal) * 100);
       this.logger.verbose(`Loading: ${percentage}% (${url})`);
 
-      g_core.getInteralNetwork().emit('asset.progress', {
+      g_core.getInternalNet().emit('asset.progress', {
         url,
         loaded: itemsLoaded,
         total: itemsTotal,
@@ -86,7 +86,7 @@ export class AssetManager {
     this.loadingManager.onError = (url) => {
       this.logger.error(`Error loading: ${url}`);
 
-      g_core.getInteralNetwork().emit('asset.error', { url });
+      g_core.getInternalNet().emit('asset.error', { url });
     };
   }
 
@@ -222,7 +222,7 @@ export class AssetManager {
 
       this.logger.log(`Asset loaded: ${key}`);
 
-      g_core.getInteralNetwork().emit('asset.loaded', { key, data });
+      g_core.getInternalNet().emit('asset.loaded', { key, data });
 
       this.pendingLoads--; // Decrementa após carregamento
       this.checkAllLoaded(); // Verifica se tudo foi carregado
@@ -237,7 +237,7 @@ export class AssetManager {
       this.isLoadingQueue = false;
 
       // Emite evento all.loaded quando todos os assets foram carregados
-      g_core.getInteralNetwork().emit('asset.all.loaded', {
+      g_core.getInternalNet().emit('asset.all.loaded', {
         totalAssets: this.totalAssets,
         loadedAssets: this.loadedAssets,
         progress: this.getLoadingProgress()
@@ -257,7 +257,7 @@ export class AssetManager {
 
     this.logger.log(`Loading asset group: ${groupName}`);
 
-    g_core.getInteralNetwork().emit('asset.group.start', {
+    g_core.getInternalNet().emit('asset.group.start', {
       group: groupName,
       total: group.assets.length
     });
@@ -274,7 +274,7 @@ export class AssetManager {
 
         loaded++;
 
-        g_core.getInteralNetwork().emit('asset.group.progress', {
+        g_core.getInternalNet().emit('asset.group.progress', {
           group: groupName,
           loaded,
           total: group.assets.length,
@@ -288,7 +288,7 @@ export class AssetManager {
         group.onComplete();
       }
 
-      g_core.getInteralNetwork().emit('asset.group.complete', {
+      g_core.getInternalNet().emit('asset.group.complete', {
         group: groupName,
         results
       });
@@ -297,7 +297,7 @@ export class AssetManager {
     } catch (error) {
       this.logger.error(`Error loading group ${groupName}: ${error}`);
 
-      g_core.getInteralNetwork().emit('asset.group.error', {
+      g_core.getInternalNet().emit('asset.group.error', {
         group: groupName,
         error
       });
@@ -378,11 +378,11 @@ export class AssetManager {
 
     return new Promise((resolve) => {
       const handler = () => {
-        //g_core.getInteralNetwork()('asset.all.loaded', handler);
+        //g_core.getInternalNet()('asset.all.loaded', handler);
         resolve();
       };
 
-      g_core.getInteralNetwork().on('asset.all.loaded', handler);
+      g_core.getInternalNet().on('asset.all.loaded', handler);
     });
   }
 

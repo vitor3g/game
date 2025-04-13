@@ -204,7 +204,8 @@ export class BaseWorld implements IGameWorld {
 
     this.logInfo(`World '${this.name}' initialized`);
 
-    g_core.getInteralNetwork().on(CommonEvents.EVENT_UPDATE, this.update.bind(this));
+    g_core.getInternalNet().on(CommonEvents.EVENT_UPDATE, this.update.bind(this));
+    g_core.getInternalNet().emit(CommonEvents.EVENT_WORLD_INIT, this.initialized);
   }
 
   destroy(): void {
@@ -241,7 +242,7 @@ export class BaseWorld implements IGameWorld {
       this.paused = true;
       this.logInfo(`World '${this.name}' paused`);
 
-      g_core.getInteralNetwork().emit('world.pause', { world: this.name });
+      g_core.getInternalNet().emit('world.pause', { world: this.name });
     }
   }
 
@@ -250,7 +251,7 @@ export class BaseWorld implements IGameWorld {
       this.paused = false;
       this.logInfo(`World '${this.name}' resumed`);
 
-      g_core.getInteralNetwork().emit('world.resume', { world: this.name });
+      g_core.getInternalNet().emit('world.resume', { world: this.name });
     }
   }
 

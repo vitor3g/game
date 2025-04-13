@@ -12,14 +12,19 @@ export class Game {
   private readonly gameWorld: World;
 
   // Entities
-  private readonly skyEntity: SkyEntity;
-  private readonly boxEntity: IGameEntity;
-  private readonly cameraEntity: IGameEntity;
+  private skyEntity!: SkyEntity;
+  private boxEntity!: IGameEntity;
+  private cameraEntity!: IGameEntity;
 
   constructor() {
     this.logger = g_core.getConsole().NewLoggerCtx("dz::game")
     this.gameWorld = new World("game-world", g_core.getGraphics().getRendererScene());
 
+
+  }
+
+
+  public async start() {
     /*
       Entities
     */
@@ -48,10 +53,7 @@ export class Game {
     followCameraComponent.setTarget(this.boxEntity);
 
     this.cameraEntity.addComponent(followCameraComponent)
-  }
 
-
-  public async start() {
     await g_core.getAudioManager().load("/data/sounds/ui/change.wav", {
       type: SoundType.UI,
       key: 'ui-change'
@@ -72,7 +74,7 @@ export class Game {
     g_core.getAssetManager().loadGroup("vehicles");
     g_core.getAssetManager().loadGroup("wheels");
 
-    g_core.getInteralNetwork().on("asset.all.loaded", () => {
+    g_core.getInternalNet().on("asset.all.loaded", () => {
       this.gameWorld.initialize();
 
       this.logger.log("World Initialized");

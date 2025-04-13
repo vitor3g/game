@@ -19,7 +19,7 @@ export class Keybinds {
       this.lastKeyPressed = e.code;
 
 
-      g_core.getInteralNetwork().emit(CommonEvents.EVENT_KEYDOWN, e.key);
+      g_core.getInternalNet().emit(CommonEvents.EVENT_KEYDOWN, e.key);
 
     });
 
@@ -29,7 +29,7 @@ export class Keybinds {
         this.lastKeyPressed = null;
       }
 
-      g_core.getInteralNetwork().emit(CommonEvents.EVENT_KEYUP, e.key);
+      g_core.getInternalNet().emit(CommonEvents.EVENT_KEYUP, e.key);
     });
 
     window.addEventListener('mousemove', (e) => {
@@ -37,7 +37,7 @@ export class Keybinds {
       this.mouse.y = e.clientY;
 
 
-      g_core.getInteralNetwork().emit(CommonEvents.EVENT_MOUSE_MOVE, { x: e.clientX, y: e.clientY });
+      g_core.getInternalNet().emit(CommonEvents.EVENT_MOUSE_MOVE, { x: e.clientX, y: e.clientY });
     });
 
     window.addEventListener('mousedown', (e) => {
@@ -46,7 +46,7 @@ export class Keybinds {
         this.keys.add(code);
         this.lastKeyPressed = code;
 
-        g_core.getInteralNetwork().emit(CommonEvents.EVENT_MOUSE_DOWN, code);
+        g_core.getInternalNet().emit(CommonEvents.EVENT_MOUSE_DOWN, code);
       }
     });
 
@@ -58,7 +58,7 @@ export class Keybinds {
           this.lastKeyPressed = null;
         }
 
-        g_core.getInteralNetwork().emit(CommonEvents.EVENT_MOUSE_UP, code);
+        g_core.getInternalNet().emit(CommonEvents.EVENT_MOUSE_UP, code);
       }
     });
 
