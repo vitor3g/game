@@ -1,4 +1,4 @@
-import { DriftZone } from "@/client/dz";
+import { DriftZone } from "@/client/Factory";
 import { dynamicActivate } from "@helpers/locale/i18n";
 
 async function bootstrap() {

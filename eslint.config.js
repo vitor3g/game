@@ -41,6 +41,7 @@ export default [
       "@typescript-eslint/no-misused-promises": "off",
       "no-async-promise-executor": "off",
       "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/restrict-template-expressions": "off"
     },
   },
 ];

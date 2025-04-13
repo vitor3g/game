@@ -1,64 +1,48 @@
-import { Physics } from "../physics/physics";
-import { Buildings } from "./buildings";
-import { Debug } from "./debug";
-import { EntityManager } from "./entity-manager";
-import { Models } from "./models";
-import { World } from "./world";
-
+import { AssetType } from "../core/AssetManager";
+import type { ContextLogger } from "../core/Console";
+import { SkyEntity } from "./Sky/SkyEntity";
+import { World } from "./World";
 
 export class Game {
-  private readonly physics: Physics;
-  private readonly models: Models;
-  private readonly entityManager: EntityManager;
-  private readonly buildings: Buildings;
-  private readonly debug: Debug;
-  private readonly world: World;
+  private readonly logger: ContextLogger;
+  private readonly gameWorld: World;
+
+  // Entities
+  private readonly skyEntity: SkyEntity;
 
   constructor() {
-    this.physics = new Physics();
-    this.models = new Models();
-    this.entityManager = new EntityManager();
-    this.buildings = new Buildings();
-    this.world = new World(this);
-    this.debug = new Debug();
+    this.logger = g_core.getConsole().NewLoggerCtx("dz::game")
+    this.gameWorld = new World("game-world", g_core.getGraphics().getRendererScene());
+
+    // Entities
+    this.skyEntity = new SkyEntity(this.gameWorld);
+    this.gameWorld.addEntity(this.skyEntity);
+
+
+    g_core.getAssetManager().register("gt86", "/data/vehicles/gt86.glb", AssetType.MODEL_GLTF);
+    g_core.getAssetManager().register("wheel_1", "/data/wheels/1.glb", AssetType.MODEL_GLTF);
+
+    g_core.getAssetManager().createGroup("vehicles", [
+      "gt86",
+    ]);
+
+    g_core.getAssetManager().createGroup("wheels", [
+      "wheel_1",
+    ]);
+
+    g_core.getAssetManager().loadGroup("vehicles");
+    g_core.getAssetManager().loadGroup("wheels");
   }
 
-  public async start() {
-    await this.physics.start();
+  public start() {
+    g_core.getInteralNetwork().on("asset.all.loaded", () => {
+      this.gameWorld.initialize();
 
-    this.entityManager.start();
-
-
-    this.world.createGameWorld();
-
-    this.debug.start();
-
-    g_core.getGraphics().getTickManager().subscribe("game-loop", this.update.bind(this));
-
-    return 1;
+      this.logger.log("World Initialized");
+    });
   }
 
-  public update() {
-    this.debug.update();
-  }
-
-  public getPhysics() {
-    return this.physics;
-  }
-
-  public getModels() {
-    return this.models;
-  }
-
-  public getWorld() {
-    return this.world;
-  }
-
-  public getEntityManager() {
-    return this.entityManager;
-  }
-
-  public getBuildings() {
-    return this.buildings;
+  public getGameWorld() {
+    return this.gameWorld;
   }
 }
