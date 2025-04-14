@@ -33,11 +33,7 @@ export class Keybinds {
     });
 
     window.addEventListener('mousemove', (e) => {
-      this.mouse.x = e.clientX;
-      this.mouse.y = e.clientY;
-
-
-      g_core.getInternalNet().emit(CommonEvents.EVENT_MOUSE_MOVE, { x: e.clientX, y: e.clientY });
+      g_core.getInternalNet().emit(CommonEvents.EVENT_MOUSE_MOVE, e);
     });
 
     window.addEventListener('mousedown', (e) => {

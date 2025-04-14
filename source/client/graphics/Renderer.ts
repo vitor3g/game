@@ -1,5 +1,6 @@
 import { SString } from "@/shared/shared.utils";
 import * as THREE from "three";
+import { RoomEnvironment } from "three/examples/jsm/Addons.js";
 import { CommonEvents } from "../enums/CommonEventsEnum";
 import { Graphics } from "./Graphics";
 
@@ -25,6 +26,15 @@ export class Renderer {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.5;
+
+    const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
+
+    this.scene.background = new THREE.Color(0xFFFFF);
+    this.scene.environment = pmremGenerator.fromScene(
+      new RoomEnvironment(),
+      0.04,
+    ).texture;
+
   }
 
 

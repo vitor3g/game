@@ -27,6 +27,7 @@ export abstract class BaseComponent implements IGameComponent {
 
 
   onUpdate(deltaTime: number): void {
+    if (!deltaTime) return;
   }
 
 

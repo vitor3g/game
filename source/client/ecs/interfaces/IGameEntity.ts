@@ -1,4 +1,4 @@
-import { Object3D } from 'three';
+import { Object3D, type Vector3 } from 'three';
 import { IGameComponent } from './IGameComponent';
 import { IGameScript } from './IGameScript';
 import { IGameWorld } from './IGameWorld';
@@ -29,6 +29,7 @@ export interface IGameEntity {
 
   readonly parent: IGameEntity | null;
 
+  getEulerAngles(): Vector3;
 
   addComponent<T extends IGameComponent>(component: T): T;
 

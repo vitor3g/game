@@ -115,7 +115,9 @@ export class Console {
         callback: () => this.setLogLevels(["debug", "verbose", "error"])
       }
     ]);
+  }
 
+  public async start() {
     g_core.getInternalNet().on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
       if (key === KeyboardKeys.F8) {
         this.toggle();

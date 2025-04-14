@@ -5,7 +5,7 @@ export type ComponentType = string;
 
 
 export type ScriptType = string;
-
+export type SystemType = string;
 
 export type Tags = Set<string>;
 

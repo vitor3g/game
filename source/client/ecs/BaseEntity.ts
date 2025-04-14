@@ -1,24 +1,25 @@
-import { Object3D } from 'three';
+import { Object3D, Vector3 } from 'three';
 import { v4 as uuidv4 } from 'uuid';
+import type { ContextLogger } from '../core/Console';
 import { IGameComponent, IGameEntity, IGameScript, IGameWorld } from './interfaces';
 import { EntityId, Tags } from './interfaces/Types';
 
-/**
- * Implementação base para entidades do jogo
- */
+
 export class BaseEntity implements IGameEntity {
   readonly id: EntityId;
-  name: string;
   readonly object3D: Object3D;
   readonly world: IGameWorld;
+  readonly children: IGameEntity[] = [];
+
+  name: string;
   active = true;
   tags: Tags = new Set<string>();
-  readonly children: IGameEntity[] = [];
   parent: IGameEntity | null = null;
 
   private components = new Map<string, IGameComponent>();
   private scripts = new Map<string, IGameScript>();
   private initialized = false;
+  private readonly logger: ContextLogger;
 
   constructor(world: IGameWorld, name = 'Entity') {
     this.id = uuidv4();
@@ -26,14 +27,28 @@ export class BaseEntity implements IGameEntity {
     this.world = world;
     this.object3D = new Object3D();
     this.object3D.name = name;
+    this.logger = g_core.getConsole().NewLoggerCtx("dz::entities");
 
     (this.object3D as any).__entity = this;
   }
 
+  getEulerAngles(): Vector3 {
+    return new Vector3(
+      this.object3D.rotation.x,
+      this.object3D.rotation.y,
+      this.object3D.rotation.z
+    );
+  }
+
+  setEulerAngles(x: number, y: number, z: number): void {
+    this.object3D.rotation.set(x, y, z);
+  }
+
+
   addComponent<T extends IGameComponent>(component: T): T {
     const type = component.type;
     if (this.components.has(type)) {
-      console.warn(`Entity ${this.name} already has a component of type ${type}`);
+      this.logger.warn(`Entity ${this.name} already has a component of type ${type}`);
       return this.components.get(type) as T;
     }
 
@@ -94,7 +109,7 @@ export class BaseEntity implements IGameEntity {
   addScript<T extends IGameScript>(script: T): T {
     const type = script.type;
     if (this.scripts.has(type)) {
-      console.warn(`Entity ${this.name} already has a script of type ${type}`);
+      this.logger.warn(`Entity ${this.name} already has a script of type ${type}`);
       return this.scripts.get(type) as T;
     }
 

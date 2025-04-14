@@ -13,6 +13,8 @@ export class BaseWorld implements IGameWorld {
   readonly scene: Scene;
   readonly entities = new Map<EntityId, IGameEntity>();
   readonly systems: IGameSystem[] = [];
+
+
   active = true;
 
   private initialized = false;
@@ -22,6 +24,7 @@ export class BaseWorld implements IGameWorld {
   constructor(name: string, scene: Scene) {
     this.name = name;
     this.scene = scene;
+
 
     this.logger = g_core.getConsole().NewLoggerCtx(`dz::world:${name}`);
   }
@@ -354,24 +357,18 @@ export class BaseWorld implements IGameWorld {
   private logDebug(message: string): void {
     if (this.logger?.debug) {
       this.logger.debug(message);
-    } else if (console.debug) {
-      console.debug(`[World:${this.name}] ${message}`);
     }
   }
 
   private logInfo(message: string): void {
     if (this.logger?.log) {
       this.logger.log(message);
-    } else {
-      console.log(`[World:${this.name}] ${message}`);
     }
   }
 
   private logWarning(message: string): void {
     if (this.logger?.warn) {
       this.logger.warn(message);
-    } else {
-      console.warn(`[World:${this.name}] ${message}`);
     }
   }
 }

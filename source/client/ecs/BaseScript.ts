@@ -6,8 +6,8 @@ import { ScriptType } from './interfaces/Types';
 
 export abstract class BaseScript implements IGameScript {
   abstract readonly type: ScriptType;
-
   readonly entity: IGameEntity;
+
 
 
   enabled = true;
@@ -26,10 +26,12 @@ export abstract class BaseScript implements IGameScript {
 
 
   onUpdate(deltaTime: number): void {
+    if (!deltaTime) return;
   }
 
 
   onFixedUpdate?(fixedDeltaTime: number): void {
+    if (!fixedDeltaTime) return;
   }
 
 
@@ -50,24 +52,30 @@ export abstract class BaseScript implements IGameScript {
 
 
   onEvent?(eventName: string, data?: any): void {
+    if (!eventName || !data) return;
   }
 
 
   onCollisionEnter?(other: IGameEntity): void {
+    if (!other) return;
   }
 
 
   onCollisionStay?(other: IGameEntity): void {
+    if (!other) return;
   }
 
   onCollisionExit?(other: IGameEntity): void {
+    if (!other) return;
   }
 
 
   onKeyDown?(key: string): void {
+    if (!key) return;
   }
 
   onKeyUp?(key: string): void {
+    if (!key) return;
   }
 
 

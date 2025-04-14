@@ -20,8 +20,8 @@ export class Core {
 
   constructor() {
     window.g_core = this;
-    this.internalNetwork = new InternalNetwork();
     this.console = new Console();
+    this.internalNetwork = new InternalNetwork();
     this.logger = this.console.NewLoggerCtx("dz::core");
 
     this.graphics = new Graphics();
@@ -37,6 +37,7 @@ export class Core {
   }
 
   public async start() {
+    this.console.start();
     this.graphics.start();
     await this.game.start();
   }

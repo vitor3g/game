@@ -200,13 +200,13 @@ export class AssetManager {
             break;
 
           default:
-            this.pendingLoads--; // Decrementa para casos rejeitados
-            this.checkAllLoaded(); // Verifica se tudo foi carregado
+            this.pendingLoads--;
+            this.checkAllLoaded();
             reject(new Error(`Unsupported asset type: ${asset.type}`));
         }
       } catch (error) {
-        this.pendingLoads--; // Decrementa para erros
-        this.checkAllLoaded(); // Verifica se tudo foi carregado após erro
+        this.pendingLoads--;
+        this.checkAllLoaded();
         this.logger.error(`Error loading asset ${key}: ${error}`);
         reject(error);
       }
@@ -224,19 +224,17 @@ export class AssetManager {
 
       g_core.getInternalNet().emit('asset.loaded', { key, data });
 
-      this.pendingLoads--; // Decrementa após carregamento
-      this.checkAllLoaded(); // Verifica se tudo foi carregado
+      this.pendingLoads--;
+      this.checkAllLoaded();
 
       resolve(data);
     }
   }
 
-  // Novo método para verificar se todos os assets foram carregados
   private checkAllLoaded(): void {
     if (this.isLoadingQueue && this.pendingLoads === 0) {
       this.isLoadingQueue = false;
 
-      // Emite evento all.loaded quando todos os assets foram carregados
       g_core.getInternalNet().emit('asset.all.loaded', {
         totalAssets: this.totalAssets,
         loadedAssets: this.loadedAssets,
@@ -265,7 +263,7 @@ export class AssetManager {
     const results = new Map<string, any>();
     let loaded = 0;
 
-    this.isLoadingQueue = true; // Marca que há carregamentos acontecendo
+    this.isLoadingQueue = true;
 
     try {
       await Promise.all(group.assets.map(async (key) => {
@@ -365,12 +363,10 @@ export class AssetManager {
     return Math.round((this.loadedAssets / this.totalAssets) * 100);
   }
 
-  // Novo método para verificar se todos os assets estão carregados
   public areAllAssetsLoaded(): boolean {
     return !this.isLoadingQueue && this.pendingLoads === 0 && this.loadedAssets === this.totalAssets;
   }
 
-  // Método para aguardar até que todos os assets estejam carregados
   public waitForAllAssetsLoaded(): Promise<void> {
     if (this.areAllAssetsLoaded()) {
       return Promise.resolve();
@@ -378,7 +374,6 @@ export class AssetManager {
 
     return new Promise((resolve) => {
       const handler = () => {
-        //g_core.getInternalNet()('asset.all.loaded', handler);
         resolve();
       };
 
