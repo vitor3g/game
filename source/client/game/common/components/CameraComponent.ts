@@ -1,11 +1,10 @@
 import { BaseComponent } from "@/client/ecs/BaseComponent";
 import type { IGameEntity } from "@/client/ecs/interfaces";
 import { CommonEvents } from "@/client/enums/CommonEventsEnum";
-import { Vec3 } from "cannon-es";
 import { MathUtils, PerspectiveCamera, Vector3 } from "three";
 
 export interface FollowCameraProps {
-  target: IGameEntity;
+  target?: IGameEntity;
   distance: number;
   height: number;
   sensitivity: number;
@@ -25,7 +24,7 @@ export class CameraComponent extends BaseComponent {
   private cameraPosition: Vector3 = new Vector3()
   private currentDistance: number;
   private camera: PerspectiveCamera;
-  private rayDirection = new Vec3()
+  //private rayDirection = new Vec3()
 
   constructor(entity: IGameEntity, private readonly options: FollowCameraProps) {
     super(entity);
@@ -46,8 +45,6 @@ export class CameraComponent extends BaseComponent {
     g_core.getInternalNet().on(CommonEvents.EVENT_MOUSE_DOWN, this._onMouseDown.bind(this));
 
     document.addEventListener('pointerlockchange', this._onPointerLockChange.bind(this));
-
-
   }
 
 
@@ -82,14 +79,15 @@ export class CameraComponent extends BaseComponent {
 
   onUpdate(dt: number): void {
     const { target,
-      distance,
+      //distance,
       height,
       smoothing = 0.2,
-      collisionRadius = 0.2,
-      collisionMask = -1,
-      returnSpeed = 5
+      // collisionRadius = 0.2,
+      // collisionMask = -1,
+      // returnSpeed = 5
     } = this.options;
 
+    if (!target) return;
     if (!target.object3D) return;
 
     const targetPos = target.object3D.position;
@@ -100,42 +98,45 @@ export class CameraComponent extends BaseComponent {
     const pitchRad = MathUtils.DEG2RAD * this.pitch;
     const yawRad = MathUtils.DEG2RAD * this.yaw;
 
-    this.rayDirection.set(
-      Math.sin(yawRad) * Math.cos(pitchRad),
-      Math.sin(pitchRad),
-      Math.cos(yawRad) * Math.cos(pitchRad)
-    ).normalize();
+    //this.rayDirection.set(
+    //  Math.sin(yawRad) * Math.cos(pitchRad),
+    //  Math.sin(pitchRad),
+    //  Math.cos(yawRad) * Math.cos(pitchRad)
+    //).normalize();
 
 
 
-    const rayStart = new Vec3(
-      this.targetPosition.x,
-      this.targetPosition.y,
-      this.targetPosition.z
-    )
+    //const rayStart = new Vec3(
+    //  this.targetPosition.x,
+    //  this.targetPosition.y,
+    //  this.targetPosition.z
+    //)
 
-    const rayEnd = new Vec3(
-      rayStart.x + (this.rayDirection.x * distance),
-      rayStart.y + (this.rayDirection.y * distance),
-      rayStart.z + (this.rayDirection.z * distance)
-    );
+    //const rayEnd = new Vec3(
+    //  rayStart.x + (this.rayDirection.x * distance),
+    //  rayStart.y + (this.rayDirection.y * distance),
+    //  rayStart.z + (this.rayDirection.z * distance)
+    //);
 
 
-    const result = g_core.getGame().physicsSystem.raycastFirst(rayStart, rayEnd, {
-      filterCollisionMask: collisionMask
-    });
+    //const physicsSystem = g_core.getGame().getGameWorld().getSystem<PhysicsSystem>(PhysicsSystem);
+    //if (!physicsSystem) return;
 
-    if (result?.hasHit) {
-      if (!result.point) return;
-      const collisionDistance = result.point.vsub(rayStart).length() - collisionRadius;
-      this.currentDistance = Math.min(this.currentDistance, collisionDistance);
-    } else {
-      this.currentDistance = MathUtils.lerp(
-        this.currentDistance,
-        distance,
-        Math.min(returnSpeed * dt, 1)
-      );
-    }
+    //const result = physicsSystem.raycastFirst(rayStart, rayEnd, {
+    //  filterCollisionMask: collisionMask
+    //});
+    //
+    //if (result?.hasHit) {
+    //  if (!result.point) return;
+    //  const collisionDistance = result.point.vsub(rayStart).length() - collisionRadius;
+    //  this.currentDistance = Math.min(this.currentDistance, collisionDistance);
+    //} else {
+    //  this.currentDistance = MathUtils.lerp(
+    //    this.currentDistance,
+    //    distance,
+    //    Math.min(returnSpeed * dt, 1)
+    //  );
+    //}
 
     const offsetX = this.currentDistance * Math.sin(yawRad) * Math.cos(pitchRad);
     const offsetY = this.currentDistance * Math.sin(pitchRad);
@@ -160,5 +161,10 @@ export class CameraComponent extends BaseComponent {
 
     const lookTarget = new Vector3().copy(this.targetPosition);
     this.camera.lookAt(lookTarget);
+  }
+
+
+  public setCameraTarget(target: IGameEntity) {
+    this.options.target = target;
   }
 }

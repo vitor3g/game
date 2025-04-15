@@ -1,6 +1,7 @@
 import { ImGui } from "@zhobo63/imgui-ts";
 import { CommonEvents } from "../enums/CommonEventsEnum";
 import { KeyboardKeys } from "../enums/KeysEnum";
+import { hookGlobalConsole } from "@/shared/shared.utils";
 
 type LogLevel = "log" | "error" | "warn" | "debug" | "verbose" | "fatal";
 
@@ -115,6 +116,13 @@ export class Console {
         callback: () => this.setLogLevels(["debug", "verbose", "error"])
       }
     ]);
+
+
+    hookGlobalConsole(this);
+  }
+
+  private _onUnhandledRejection(event: PromiseRejectionEvent) {
+    this.error(event.reason)
   }
 
   public async start() {

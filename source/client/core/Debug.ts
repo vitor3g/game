@@ -1,16 +1,11 @@
-import CannonDebugger from 'cannon-es-debugger';
 import { CommonEvents } from "../enums/CommonEventsEnum";
 
 export class Debug {
   private _showFps = false;
   private _showPhysicsDebug = false;
-  private physicsDebug: any;
 
 
   constructor() {
-    this.physicsDebug = CannonDebugger(g_core.getGraphics().getRenderer().scene, g_core.getGame().getPhysicsSystem(), {})
-
-
     g_core.getInternalNet().on(CommonEvents.EVENT_UPDATE, this.update.bind(this));
 
     g_core.getConsole().setMenuItems("Overlays", [
@@ -45,10 +40,6 @@ export class Debug {
 
     const xPosition = 10;
     const yPosition = canvasHeight - 20;
-
-    if (this._showPhysicsDebug) {
-      this.physicsDebug.update()
-    }
 
     if (this._showFps) {
       g_core

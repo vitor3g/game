@@ -33,13 +33,21 @@ export class Core {
 
     this.internalNetwork.setDebugMode(false);
 
+
+
     this.logger.log("Core");
   }
 
   public async start() {
     this.console.start();
     this.graphics.start();
+
     await this.game.start();
+  }
+
+
+  public async _hookAmmoPhysics() {
+
   }
 
   public getGraphics() {

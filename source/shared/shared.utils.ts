@@ -1,3 +1,4 @@
+import type { Console } from "@/client/core/Console";
 import format from "@stdlib/string-format";
 import * as THREE from "three";
 
@@ -77,4 +78,20 @@ export function findFirstMesh(object: THREE.Object3D): THREE.Mesh | null {
   });
 
   return mesh;
+}
+
+
+export function hookGlobalConsole(consoleInstance: Console) {
+  (["log", "error", "warn", "debug", "info"] as const).forEach(level => {
+    const method = console[level];
+
+    console[level] = function (...args: any[]) {
+      method.apply(console, args);
+      // @ts-ignore
+      if (consoleInstance && typeof consoleInstance[level] === 'function') {
+        // @ts-ignore
+        consoleInstance[level](...args);
+      }
+    };
+  });
 }
