@@ -1,7 +1,7 @@
+import { hookGlobalConsole } from "@/shared/shared.utils";
 import { ImGui } from "@zhobo63/imgui-ts";
 import { CommonEvents } from "../enums/CommonEventsEnum";
 import { KeyboardKeys } from "../enums/KeysEnum";
-import { hookGlobalConsole } from "@/shared/shared.utils";
 
 type LogLevel = "log" | "error" | "warn" | "debug" | "verbose" | "fatal";
 

@@ -37,6 +37,7 @@
     "vite-plugin-inspect": "^10.1.0"
   },
   "dependencies": {
+    "@enable3d/ammo-physics": "^0.26.1",
     "@lingui/cli": "^5.1.2",
     "@lingui/core": "^5.1.2",
     "@lingui/react": "^5.1.2",
@@ -48,6 +49,7 @@
     "ammojs-typed": "^1.0.6",
     "ammojs3": "^0.0.11",
     "chalk": "^5.4.1",
+    "enable3d": "^0.26.1",
     "eslint": "^9.19.0",
     "patch-package": "^8.0.0",
     "serve": "^14.2.4",

@@ -1,3 +1,4 @@
+import { PhysicsLoader } from "@enable3d/ammo-physics";
 import { CoreModule } from "./core/Core";
 
 export class dzFactoryStatic {
@@ -5,25 +6,12 @@ export class dzFactoryStatic {
   }
 
   public async create() {
-    await this._bootstrapAmmoPhysics();
-
-    const module = CoreModule();
-
-    await module.start();
+    PhysicsLoader('/data/libs/ammojs', async () => {
+      const module = CoreModule();
+      await module.start();
+    })
 
     return 0;
-  }
-
-  private async _bootstrapAmmoPhysics() {
-    await new Promise((resolve) => {
-      import('ammojs-typed')
-        .then((Module) => Module.default())
-        .then((ammo) => {
-          window.Ammo = ammo;
-
-          resolve(ammo)
-        })
-    })
   }
 }
 

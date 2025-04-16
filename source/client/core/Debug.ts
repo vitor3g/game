@@ -1,7 +1,7 @@
 import { CommonEvents } from "../enums/CommonEventsEnum";
 
 export class Debug {
-  private _showFps = false;
+  private _showFps = true;
   private _showPhysicsDebug = false;
 
 
@@ -25,6 +25,13 @@ export class Debug {
 
   public togglePhysicsDebug() {
     this._showPhysicsDebug = !this._showPhysicsDebug;
+
+    if (this._showPhysicsDebug) {
+      g_core.getGraphics().getRenderer().getPhysics().debug?.enable()
+
+    } else {
+      g_core.getGraphics().getRenderer().getPhysics().debug?.disable()
+    }
   }
 
   public update() {
@@ -40,6 +47,11 @@ export class Debug {
 
     const xPosition = 10;
     const yPosition = canvasHeight - 20;
+
+
+    if (this._showPhysicsDebug) {
+      g_core.getGraphics().getRenderer().getPhysics().updateDebugger();
+    }
 
     if (this._showFps) {
       g_core

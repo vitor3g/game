@@ -74,19 +74,19 @@ export class BaseEntity implements IGameEntity {
   }
 
   getComponent<T extends IGameComponent>(componentType: new (...args: any[]) => T): T | null {
-    const type = (componentType as any).prototype.type || componentType.name;
+    const type = (componentType as any).prototype.type ?? componentType.name;
 
     const component = this.components.get(type);
     return component as T || null;
   }
 
   hasComponent<T extends IGameComponent>(componentType: new (...args: any[]) => T): boolean {
-    const type = (componentType as any).prototype.type || componentType.name;
+    const type = (componentType as any).prototype.type ?? componentType.name;
     return this.components.has(type);
   }
 
   removeComponent<T extends IGameComponent>(componentType: new (...args: any[]) => T): boolean {
-    const type = (componentType as any).prototype.type || componentType.name;
+    const type = (componentType as any).prototype.type ?? componentType.name;
     const component = this.components.get(type);
 
     if (component) {
@@ -129,13 +129,13 @@ export class BaseEntity implements IGameEntity {
   }
 
   getScript<T extends IGameScript>(scriptType: new (...args: any[]) => T): T | null {
-    const type = (scriptType as any).prototype.type || scriptType.name;
+    const type = (scriptType as any).prototype.type ?? scriptType.name;
     const script = this.scripts.get(type);
     return script as T || null;
   }
 
   removeScript<T extends IGameScript>(scriptType: new (...args: any[]) => T): boolean {
-    const type = (scriptType as any).prototype.type || scriptType.name;
+    const type = (scriptType as any).prototype.type ?? scriptType.name;
     const script = this.scripts.get(type);
 
     if (script) {
@@ -365,7 +365,7 @@ export class BaseEntity implements IGameEntity {
   fromJSON(json: object): void {
     const data = json as any;
 
-    this.name = data.name || this.name;
+    this.name = data.name ?? this.name;
     this.active = data.active !== undefined ? data.active : this.active;
 
     this.tags.clear();

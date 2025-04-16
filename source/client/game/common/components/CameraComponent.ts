@@ -98,6 +98,7 @@ export class CameraComponent extends BaseComponent {
     const pitchRad = MathUtils.DEG2RAD * this.pitch;
     const yawRad = MathUtils.DEG2RAD * this.yaw;
 
+
     //this.rayDirection.set(
     //  Math.sin(yawRad) * Math.cos(pitchRad),
     //  Math.sin(pitchRad),

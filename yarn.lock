@@ -306,6 +306,40 @@
     "@types/conventional-commits-parser" "^5.0.0"
     chalk "^5.3.0"
 
+"@enable3d/ammo-physics@^0.26.1":
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/@enable3d/ammo-physics/-/ammo-physics-0.26.1.tgz#fbb3e8d195d7f07aae4339e0ed9fc5a458715c3e"
+  integrity sha512-3LRndxRBJ2VPbKfg2tCGXNm0oMbLBKzglotvGwlosfFVW9xHyxOcu/507jD/8lOtwUKYWHTP5h0Peeoo6uzpZA==
+  dependencies:
+    "@enable3d/common" "^0.26.1"
+    "@enable3d/three-wrapper" "^0.26.1"
+    "@yandeu/events" "0.0.7"
+
+"@enable3d/common@^0.26.1":
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/@enable3d/common/-/common-0.26.1.tgz#a1fd2f87a9985f0d0844caddfb596f82658b1b10"
+  integrity sha512-S1mvq3R71LYgdTE5PG6/sKvCjhv8yODQTtJYick5sdVvBEA8IlwTevl5gmBNzI04sCoBvaUepE34WWsL95bRQA==
+  dependencies:
+    "@enable3d/three-wrapper" "^0.26.1"
+    "@yandeu/events" "0.0.7"
+
+"@enable3d/three-graphics@^0.26.1":
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/@enable3d/three-graphics/-/three-graphics-0.26.1.tgz#44bad88741d130ee83f0037b6beaea41b0101a9a"
+  integrity sha512-s7RuKUVZeelI6PW5G8eLjFFm7Wsp03t15ISDdTQFRKf4jk9jZW9U6cX9/fuVKDjfIGfTMB2b2izOUpo1ft6EUA==
+  dependencies:
+    "@enable3d/ammo-physics" "^0.26.1"
+    "@enable3d/common" "^0.26.1"
+    "@enable3d/three-wrapper" "^0.26.1"
+    "@yandeu/events" "0.0.7"
+    "@yandeu/tap" "0.0.3"
+    three-csg-ts "^3.1.10"
+
+"@enable3d/three-wrapper@^0.26.1":
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/@enable3d/three-wrapper/-/three-wrapper-0.26.1.tgz#efb965c2d401c3882caf12b9be524a0eff98bafa"
+  integrity sha512-evzptJ99LIymOIQFk//l6lgMa8VJ0tgUn+q7OS5ycR1vbqmcuAs7M80m5UIdVcEg+5Ef1Gsy4sPEV3JWbhJP7A==
+
 "@esbuild/aix-ppc64@0.25.2":
   version "0.25.2"
   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.25.2.tgz#b87036f644f572efb2b3c75746c97d1d2d87ace8"
@@ -1044,6 +1078,23 @@
   version "0.1.60"
   resolved "https://registry.yarnpkg.com/@webgpu/types/-/types-0.1.60.tgz#4f58e763ce060a81b03ab7ee1ad879c7024923fd"
   integrity sha512-8B/tdfRFKdrnejqmvq95ogp8tf52oZ51p3f4QD5m5Paey/qlX4Rhhy5Y8tgFMi7Ms70HzcMMw3EQjH/jdhTwlA==
+
+"@yandeu/events@0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@yandeu/events/-/events-0.0.5.tgz#f8fb41cf4222186eca6a0a5d36f5393805484f19"
+  integrity sha512-TUkghSGu0ThcEyAP50WHU/vdQkpt9EZyotjZzG8KirR+VI5o7Rp5wabcGru62JNy+awMR8Voy+kFzhNkC/1E6A==
+
+"@yandeu/events@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@yandeu/events/-/events-0.0.7.tgz#ec87d8407daa758d57c278946bf8f098ccbd2b9a"
+  integrity sha512-l78u4CooPw/WlN3H15bhOpims+gAsAkxbcjDn1GZ5oa+h9wqg+pBBzZos38xDeqKW/UVgPMkurVDPrf7JhhmTA==
+
+"@yandeu/tap@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@yandeu/tap/-/tap-0.0.3.tgz#36109cb23a02a4808407fb7f9811fcb6cfec8521"
+  integrity sha512-GIStEHmboHVbs6ghcRxkO5NVdZtRCsf1mkKI0gvzc21uj5qGlGSCD/Eaax98/c6Mu9+n2lkTYbTwuBbg2vzuQw==
+  dependencies:
+    "@yandeu/events" "0.0.5"
 
 "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
@@ -1978,6 +2029,16 @@ emoji-regex@^9.2.2:
   version "9.2.2"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-9.2.2.tgz#840c8803b0d8047f4ff0cf963176b32d4ef3ed72"
   integrity sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==
+
+enable3d@^0.26.1:
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/enable3d/-/enable3d-0.26.1.tgz#754785424d98ffb9cd718bbe747c2bd6897b44e7"
+  integrity sha512-CJXWj9UhnWrT5dLhZLvvU31ohSBGoKGLq1KRA8XUtB6LhXVoKTuzKnJyGD6cJeoz7YX0ZZxJTlEylte2n+4zDA==
+  dependencies:
+    "@enable3d/ammo-physics" "^0.26.1"
+    "@enable3d/common" "^0.26.1"
+    "@enable3d/three-graphics" "^0.26.1"
+    "@enable3d/three-wrapper" "^0.26.1"
 
 env-paths@^2.2.1:
   version "2.2.1"
@@ -4355,6 +4416,11 @@ text-extensions@^2.0.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/text-extensions/-/text-extensions-2.4.0.tgz#a1cfcc50cf34da41bfd047cc744f804d1680ea34"
   integrity sha512-te/NtwBwfiNRLf9Ijqx3T0nlqZiQ2XrrtBvu+cLL8ZRrGkO0NHTug8MYFKyoSrv/sHTaSKfilUkizV6XhxMJ3g==
+
+three-csg-ts@^3.1.10:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/three-csg-ts/-/three-csg-ts-3.2.0.tgz#f6e834610615577dc24419052ce8edf509743ef5"
+  integrity sha512-oTYg8kdal6qgHDbso/6VzA12Udf2ic2uXhf0XlJzuSP+Gs0OUR5gTHSZ7GotAE+M/QcVlw41eOwiWZVnJG5/8w==
 
 three@^0.172.0:
   version "0.172.0"
