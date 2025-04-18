@@ -83,13 +83,14 @@ export class VehiclePhysics extends BaseComponent {
 
     if (!tire) return;
 
-    const suspensionStiffness = 50.0
-    const suspensionDamping = 2.3
-    const suspensionCompression = 4.4
     const suspensionRestLength = 0
 
-    const friction = 50
-    const rollInfluence = 0.01
+    const suspensionStiffness = 25.0
+    const suspensionDamping = 2.5
+    const suspensionCompression = 4.4
+
+    const friction = 10
+    const rollInfluence = 0.001
 
     const wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0)
     const wheelAxleCS = new Ammo.btVector3(-1, 0, 0)
@@ -121,14 +122,15 @@ export class VehiclePhysics extends BaseComponent {
 
     let tm, p, q, i
     const n = this.vehicle.getNumWheels()
+
+
     for (i = 0; i < n; i++) {
-      // this.vehicle.updateWheelTransform(i, true)
+      this.vehicle.updateWheelTransform(i, true)
       tm = this.vehicle.getWheelTransformWS(i)
       p = tm.getOrigin()
       q = tm.getRotation()
       this.wheelMeshes[i].position.set(p.x(), p.y(), p.z())
       this.wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w())
-      // this.wheelMeshes[i].rotateZ(Math.PI / 2)
     }
 
     tm = this.vehicle.getChassisWorldTransform()

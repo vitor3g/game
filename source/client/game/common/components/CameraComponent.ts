@@ -79,12 +79,8 @@ export class CameraComponent extends BaseComponent {
 
   onUpdate(dt: number): void {
     const { target,
-      //distance,
       height,
       smoothing = 0.2,
-      // collisionRadius = 0.2,
-      // collisionMask = -1,
-      // returnSpeed = 5
     } = this.options;
 
     if (!target) return;
@@ -94,50 +90,12 @@ export class CameraComponent extends BaseComponent {
     this.targetPosition.set(targetPos.x, targetPos.y + height, targetPos.z);
 
 
+    console.log(targetPos)
+
 
     const pitchRad = MathUtils.DEG2RAD * this.pitch;
     const yawRad = MathUtils.DEG2RAD * this.yaw;
 
-
-    //this.rayDirection.set(
-    //  Math.sin(yawRad) * Math.cos(pitchRad),
-    //  Math.sin(pitchRad),
-    //  Math.cos(yawRad) * Math.cos(pitchRad)
-    //).normalize();
-
-
-
-    //const rayStart = new Vec3(
-    //  this.targetPosition.x,
-    //  this.targetPosition.y,
-    //  this.targetPosition.z
-    //)
-
-    //const rayEnd = new Vec3(
-    //  rayStart.x + (this.rayDirection.x * distance),
-    //  rayStart.y + (this.rayDirection.y * distance),
-    //  rayStart.z + (this.rayDirection.z * distance)
-    //);
-
-
-    //const physicsSystem = g_core.getGame().getGameWorld().getSystem<PhysicsSystem>(PhysicsSystem);
-    //if (!physicsSystem) return;
-
-    //const result = physicsSystem.raycastFirst(rayStart, rayEnd, {
-    //  filterCollisionMask: collisionMask
-    //});
-    //
-    //if (result?.hasHit) {
-    //  if (!result.point) return;
-    //  const collisionDistance = result.point.vsub(rayStart).length() - collisionRadius;
-    //  this.currentDistance = Math.min(this.currentDistance, collisionDistance);
-    //} else {
-    //  this.currentDistance = MathUtils.lerp(
-    //    this.currentDistance,
-    //    distance,
-    //    Math.min(returnSpeed * dt, 1)
-    //  );
-    //}
 
     const offsetX = this.currentDistance * Math.sin(yawRad) * Math.cos(pitchRad);
     const offsetY = this.currentDistance * Math.sin(pitchRad);

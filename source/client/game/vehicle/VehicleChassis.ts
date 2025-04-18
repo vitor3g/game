@@ -24,7 +24,7 @@ export class VehicleChassis extends BaseComponent {
       if (child.isObject3D) {
         if (child.name === "Chassis") {
           this.chassisMesh = child as ExtendedMesh;
-          this.chassisMesh.position.set(0, 5, 0);
+          this.chassisMesh.position.set(0, 1.4, 0);
         } else if (child.name === "S_wheel") {
           this.tireMesh = child as ExtendedMesh;
 
