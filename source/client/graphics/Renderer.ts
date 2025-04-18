@@ -4,7 +4,6 @@ import * as THREE from "three";
 import { CommonEvents } from "../enums/CommonEventsEnum";
 import { Graphics } from "./Graphics";
 
-
 export class Renderer {
   public scene: THREE.Scene;
   public camera: THREE.PerspectiveCamera;

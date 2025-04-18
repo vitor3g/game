@@ -17,10 +17,10 @@ export class VehicleController extends BaseScript {
 
     const keyboard = g_core.getKeybinds();
 
-    const FRONT_LEFT = 2
-    const FRONT_RIGHT = 3
-    const BACK_LEFT = 0
-    const BACK_RIGHT = 1
+    const FRONT_LEFT = 0
+    const FRONT_RIGHT = 1
+    const BACK_LEFT = 2
+    const BACK_RIGHT = 3
 
     let engineForce = 0
     const steeringIncrement = 0.04

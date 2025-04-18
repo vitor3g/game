@@ -2,9 +2,9 @@ import { BaseComponent } from "@/client/ecs/BaseComponent";
 import type { IGameEntity } from "@/client/ecs/interfaces";
 import { CommonEvents } from "@/client/enums/CommonEventsEnum";
 import { MathUtils, PerspectiveCamera, Vector3 } from "three";
+import { VehiclePhysics } from "./VehiclePhysics";
 
-export interface FollowCameraProps {
-  target?: IGameEntity;
+export interface VehicleCameraOptions {
   distance: number;
   height: number;
   sensitivity: number;
@@ -15,8 +15,10 @@ export interface FollowCameraProps {
 }
 
 
-export class CameraComponent extends BaseComponent {
-  readonly type: string = 'CameraComponent';
+export class VehicleCamera extends BaseComponent {
+  readonly type: string = "VehicleCamera";
+
+
   private yaw = 0;
   private pitch = 15;
   private isPointerLocked = false;
@@ -24,9 +26,9 @@ export class CameraComponent extends BaseComponent {
   private cameraPosition: Vector3 = new Vector3()
   private currentDistance: number;
   private camera: PerspectiveCamera;
-  //private rayDirection = new Vec3()
 
-  constructor(entity: IGameEntity, private readonly options: FollowCameraProps) {
+
+  constructor(entity: IGameEntity, private readonly options: VehicleCameraOptions) {
     super(entity);
 
     this.camera = new PerspectiveCamera(
@@ -46,7 +48,6 @@ export class CameraComponent extends BaseComponent {
 
     document.addEventListener('pointerlockchange', this._onPointerLockChange.bind(this));
   }
-
 
   _onMouseDown(key: string) {
     if (key === 'MouseLeft') {
@@ -78,19 +79,18 @@ export class CameraComponent extends BaseComponent {
   }
 
   onUpdate(dt: number): void {
-    const { target,
+    const {
       height,
       smoothing = 0.2,
     } = this.options;
 
-    if (!target) return;
-    if (!target.object3D) return;
+    const vehicle = this.entity.getComponent<VehiclePhysics>(VehiclePhysics)
+    if (!vehicle) return;
 
-    const targetPos = target.object3D.position;
-    this.targetPosition.set(targetPos.x, targetPos.y + height, targetPos.z);
+    const targetPos = vehicle.getVehicle().getChassisWorldTransform().getOrigin();
+    this.targetPosition.set(targetPos.x(), targetPos.y() + height, targetPos.z());
 
 
-    console.log(targetPos)
 
 
     const pitchRad = MathUtils.DEG2RAD * this.pitch;
@@ -103,9 +103,9 @@ export class CameraComponent extends BaseComponent {
 
 
     const desiredPos = new Vector3(
-      targetPos.x + offsetX,
-      targetPos.y + height + offsetY,
-      targetPos.z + offsetZ
+      targetPos.x() + offsetX,
+      targetPos.y() + height + offsetY,
+      targetPos.z() + offsetZ
     );
 
 
@@ -120,10 +120,5 @@ export class CameraComponent extends BaseComponent {
 
     const lookTarget = new Vector3().copy(this.targetPosition);
     this.camera.lookAt(lookTarget);
-  }
-
-
-  public setCameraTarget(target: IGameEntity) {
-    this.options.target = target;
   }
 }

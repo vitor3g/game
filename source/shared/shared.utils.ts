@@ -85,6 +85,7 @@ export function hookGlobalConsole(consoleInstance: Console) {
   (["log", "error", "warn", "debug", "info"] as const).forEach(level => {
     const method = console[level];
 
+
     console[level] = function (...args: any[]) {
       method.apply(console, args);
       // @ts-ignore

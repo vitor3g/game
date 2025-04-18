@@ -25,6 +25,7 @@ export class Gui {
     ImGui.StyleColorsDark();
     this.io.Fonts.AddFontDefault();
 
+
     ImGui_Impl.Init(this.g_graphics.getRenderer().renderer.domElement);
 
     g_core.getInternalNet().on(CommonEvents.EVENT_UPDATE, this.update.bind(this));

@@ -2,6 +2,8 @@ import { BaseComponent } from "@/client/ecs/BaseComponent";
 import type { IGameEntity } from "@/client/ecs/interfaces";
 import type { ExtendedMesh } from "@enable3d/ammo-physics";
 import AmmoTypes from "ammojs-typed";
+import * as THREE from "three";
+import { DummyLookupSystem } from "../DummyLookupSystem";
 import { VehicleChassis } from "./VehicleChassis";
 
 
@@ -18,14 +20,10 @@ export class VehiclePhysics extends BaseComponent {
 
   onInit(): void {
     const chassis = this.entity.getComponent<VehicleChassis>(VehicleChassis);
-
     if (!chassis) return;
-
 
     const physics = g_core.getGraphics().getRenderer().getPhysics();
     if (!physics) return;
-
-
 
     this.tuning = new Ammo.btVehicleTuning();
     const raycaster = new Ammo.btDefaultVehicleRaycaster(physics.physicsWorld);
@@ -37,53 +35,44 @@ export class VehiclePhysics extends BaseComponent {
     this.vehicle.setCoordinateSystem(0, 1, 2);
     physics.physicsWorld.addAction(this.vehicle);
 
-    const FRONT_LEFT = 2
-    const FRONT_RIGHT = 3
-    const BACK_LEFT = 0
-    const BACK_RIGHT = 1
+    const dummies = g_core.getGame().getGameWorld().getSystem<DummyLookupSystem>(DummyLookupSystem);
+    if (!dummies) return;
 
-    const wheelAxisPositionBack = -1.3
-    const wheelRadiusBack = 0.5
-    const wheelHalfTrackBack = 1.1
-    const wheelAxisHeightBack = 0
+    const wheels: Record<string, { index: number, isFront: boolean, isRight: boolean }> = {
+      "wheel_rf_dummy": { index: 0, isFront: true, isRight: true },
+      "wheel_lf_dummy": { index: 1, isFront: true, isRight: false },
+      "wheel_rb_dummy": { index: 2, isFront: false, isRight: true },
+      "wheel_lb_dummy": { index: 3, isFront: false, isRight: false }
+    }
 
-    const wheelAxisFrontPosition = 1.2
-    const wheelRadiusFront = 0.5
-    const wheelHalfTrackFront = 1.1
-    const wheelAxisHeightFront = 0
+    Object.keys(wheels).forEach((key) => {
+      const wheelInfo = wheels[key];
+      const dummy = dummies.getDummy(this.entity, key);
 
-    this.addWheel(
-      true,
-      new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition),
-      wheelRadiusFront,
-      FRONT_LEFT
-    )
-    this.addWheel(
-      true,
-      new Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, wheelAxisFrontPosition),
-      wheelRadiusFront,
-      FRONT_RIGHT
-    )
-    this.addWheel(
-      false,
-      new Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack),
-      wheelRadiusBack,
-      BACK_LEFT
-    )
-    this.addWheel(
-      false,
-      new Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, wheelAxisPositionBack),
-      wheelRadiusBack,
-      BACK_RIGHT
-    )
+      if (dummy) {
+        const relPos = new Ammo.btVector3(
+          dummy.position.x,
+          dummy.position.y,
+          dummy.position.z
+        );
+
+        this.addWheel(
+          wheelInfo.isFront,
+          relPos,
+          0.2,
+          wheelInfo.index,
+          wheelInfo.isRight
+        )
+      }
+    })
   }
 
-  addWheel(isFront: boolean, pos: AmmoTypes.btVector3, radius: number, index: number) {
+  addWheel(isFront: boolean, pos: AmmoTypes.btVector3, radius: number, index: number, isRight: boolean) {
     const tire = this.entity.getComponent<VehicleChassis>(VehicleChassis);
 
     if (!tire) return;
 
-    const suspensionRestLength = 0
+    const suspensionRestLength = 0.2
 
     const suspensionStiffness = 25.0
     const suspensionDamping = 2.5
@@ -113,6 +102,11 @@ export class VehiclePhysics extends BaseComponent {
     wheelInfo.set_m_rollInfluence(rollInfluence)
 
     this.wheelMeshes[index] = tire.tireMesh.clone(true)
+
+    if (isRight) {
+      this.wheelMeshes[index].rotateY(Math.PI);
+    }
+
     this.entity.object3D.add(this.wheelMeshes[index])
   }
 
@@ -120,29 +114,65 @@ export class VehiclePhysics extends BaseComponent {
     const chassis = this.entity.getComponent<VehicleChassis>(VehicleChassis);
     if (!chassis) return;
 
-    let tm, p, q, i
-    const n = this.vehicle.getNumWheels()
+    const dummies = g_core.getGame().getGameWorld().getSystem<DummyLookupSystem>(DummyLookupSystem);
+    if (!dummies) return;
 
+    let tm = this.vehicle.getChassisWorldTransform();
+    let p = tm.getOrigin();
+    let q = tm.getRotation();
 
-    for (i = 0; i < n; i++) {
-      this.vehicle.updateWheelTransform(i, true)
-      tm = this.vehicle.getWheelTransformWS(i)
-      p = tm.getOrigin()
-      q = tm.getRotation()
-      this.wheelMeshes[i].position.set(p.x(), p.y(), p.z())
-      this.wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w())
+    chassis.chassisMesh.position.set(p.x(), p.y(), p.z());
+    chassis.chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w());
+
+    const wheelNames = [
+      "wheel_rf_dummy",
+      "wheel_lf_dummy",
+      "wheel_rb_dummy",
+      "wheel_lb_dummy"
+    ];
+
+    const isRightWheel = [true, false, true, false];
+
+    for (let i = 0; i < wheelNames.length; i++) {
+      this.vehicle.updateWheelTransform(i, true);
+      tm = this.vehicle.getWheelTransformWS(i);
+      q = tm.getRotation();
+
+      const dummy = dummies.getDummy(this.entity, wheelNames[i]);
+
+      if (dummy) {
+        const dummyWorldPos = new THREE.Vector3();
+        dummy.getWorldPosition(dummyWorldPos);
+
+        this.wheelMeshes[i].position.copy(dummyWorldPos);
+
+        this.wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w());
+
+        if (isRightWheel[i]) {
+          const rightWheelRotation = new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            Math.PI
+          );
+
+          this.wheelMeshes[i].quaternion.multiply(rightWheelRotation);
+        }
+      } else {
+        p = tm.getOrigin();
+        this.wheelMeshes[i].position.set(p.x(), p.y(), p.z());
+        this.wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w());
+
+        if (isRightWheel[i]) {
+          const rightWheelRotation = new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            Math.PI
+          );
+          this.wheelMeshes[i].quaternion.multiply(rightWheelRotation);
+        }
+      }
     }
-
-    tm = this.vehicle.getChassisWorldTransform()
-    p = tm.getOrigin()
-    q = tm.getRotation()
-
-    chassis.chassisMesh.position.set(p.x(), p.y(), p.z())
-    chassis.chassisMesh.quaternion.set(q.x(), q.y(), q.z(), q.w())
   }
 
   public getVehicle(): AmmoTypes.btRaycastVehicle {
     return this.vehicle
   }
-
 }
