@@ -42,11 +42,8 @@ export class Debug {
 
     const fps = io.Framerate.toFixed(1);
 
-    const domElement = g_core.getGraphics().getRenderer().renderer.domElement;
-    const canvasHeight = domElement.height;
 
-    const xPosition = 10;
-    const yPosition = canvasHeight - 20;
+
 
 
     if (this._showPhysicsDebug) {
@@ -58,7 +55,7 @@ export class Debug {
         .getGraphics()
         .getGUI()
         .getPrimitives()
-        .addText(fps, xPosition, yPosition, "#090909");
+        .addText(fps, 10, 10, "#090909");
     }
   }
 }

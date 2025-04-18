@@ -68,7 +68,7 @@ export class Console {
     this.commandHistory = [];
     this.historyIndex = -1;
     this.commands = {};
-    this.isOpen = true;
+    this.isOpen = false;
     this.scrollToBottom = true;
     this.backgroundColor = [0.05, 0.05, 0.05, 0.9];
     this.textColor = [0.8, 0.8, 0.8, 1.0];

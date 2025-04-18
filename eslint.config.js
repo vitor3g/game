@@ -29,6 +29,7 @@ export default [
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-duplicate-enum-values": "off",
       "@typescript-eslint/no-unsafe-function-type": "off",
       "@typescript-eslint/no-floating-promises": "off",
       "@typescript-eslint/no-require-imports": "off",

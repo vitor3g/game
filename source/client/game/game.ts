@@ -1,6 +1,9 @@
+import { AssetType } from "../core/AssetManager";
+import { CameraComponent } from "./common/components/CameraComponent";
 import { DummyLookupSystem } from "./DummyLookupSystem";
 import { GameWorld } from "./GameWorld";
 import { SkyEntity } from "./sky/SkyEntity";
+import { VehicleEntity } from "./vehicle/VehicleEntity";
 
 export class Game {
   private readonly gameWorld: GameWorld;
@@ -11,16 +14,21 @@ export class Game {
   constructor() {
     this.gameWorld = new GameWorld("game-world", g_core.getGraphics().getRendererScene());
     this.dummyLookupSystem = new DummyLookupSystem(this.gameWorld);
+
   }
 
 
   public async start() {
+    g_core.getAssetManager().register("a86", "/data/vehicles/a86.glb", AssetType.MODEL_GLTF);
+    await g_core.getAssetManager().load("a86");
+
     this._applySystems();
 
     this._applyComponents();
     this._applyEntities();
 
     this.gameWorld.initialize();
+
   }
 
   public _applySystems() {
@@ -34,21 +42,25 @@ export class Game {
 
 
     /* Default Camera*/
-    //const mainCamera = this.gameWorld.createEntity("MainCamera");
-    //const cameraComponent = new CameraComponent(mainCamera, {
-    //  distance: 5,
-    //  smoothing: 0.2,
-    //  sensitivity: 0.1,
-    //  height: 1
-    //})
+    const mainCamera = this.gameWorld.createEntity("MainCamera");
+    const cameraComponent = new CameraComponent(mainCamera, {
+      distance: 5,
+      smoothing: 0.2,
+      sensitivity: 0.1,
+      height: 1
+    })
 
-    //mainCamera.addComponent(cameraComponent);
+    mainCamera.addComponent(cameraComponent);
 
   }
 
   public _applyEntities() {
     const ground = g_core.getGraphics().getRenderer().getPhysics().add.ground({ width: 500, height: 500 });
     ground.body.setFriction(1);
+
+
+    const vehicle = new VehicleEntity(this.gameWorld);
+    this.gameWorld.addEntity(vehicle);
   }
 
 

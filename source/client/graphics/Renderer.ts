@@ -1,9 +1,9 @@
 import { SString } from "@/shared/shared.utils";
 import { AmmoPhysics } from '@enable3d/ammo-physics';
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { CommonEvents } from "../enums/CommonEventsEnum";
 import { Graphics } from "./Graphics";
+
 
 export class Renderer {
   public scene: THREE.Scene;
@@ -33,9 +33,9 @@ export class Renderer {
     this.renderer.setPixelRatio(Math.min(2, DPR))
 
 
-    const controls = new OrbitControls(this.camera, this.renderer.domElement)
-    controls.target.set(0, 1, 0)
-    controls.update()
+    // const controls = new OrbitControls(this.camera, this.renderer.domElement)
+    // controls.target.set(0, 1, 0)
+    // controls.update()
 
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.5;
@@ -48,6 +48,7 @@ export class Renderer {
 
     // physics
     this.physics = new AmmoPhysics(this.scene)
+
 
     this.clock = new THREE.Clock();
   }

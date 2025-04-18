@@ -44,7 +44,7 @@
     "helpers",
     "locales",
     "vite.config.ts",
-    "@types/**/*"
+    "@types/**/*",
   ],
   "exclude": [
     "node_modules"
