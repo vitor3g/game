@@ -1,7 +1,7 @@
 import { BaseComponent } from '@/client/ecs/BaseComponent';
 import type { IGameEntity } from '@/client/ecs/interfaces';
 import type { ExtendedMesh } from '@enable3d/ammo-physics';
-import { Color, MeshPhongMaterial } from 'three'; // Import necessary Three.js classes
+import { Color, MeshPhongMaterial } from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export class VehicleChassis extends BaseComponent {
@@ -56,8 +56,7 @@ export class VehicleChassis extends BaseComponent {
     });
 
     g_core
-      .getGraphics()
-      .getRenderer()
+      .getGame()
       .getPhysics()
       .add.existing(this.chassisMesh, { shape: 'convex', mass: 1200 });
 

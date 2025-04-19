@@ -1,18 +1,22 @@
 import { SString } from '@/shared/shared.utils';
-import { AmmoPhysics } from '@enable3d/ammo-physics';
 import * as THREE from 'three';
 import { CommonEvents } from '../enums/CommonEventsEnum';
 import { Graphics } from './Graphics';
 
 export class Renderer {
   public scene: THREE.Scene;
-  public camera: THREE.PerspectiveCamera;
   public renderer: THREE.WebGLRenderer;
   public clock: THREE.Clock;
-  public physics: AmmoPhysics;
+  public camera: THREE.PerspectiveCamera;
 
   constructor(private readonly g_graphics: Graphics) {
     this.scene = new THREE.Scene();
+
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: false,
+      alpha: false,
+      powerPreference: 'high-performance',
+    });
 
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -21,13 +25,6 @@ export class Renderer {
       1000,
     );
 
-    this.camera.position.z = 5;
-
-    this.renderer = new THREE.WebGLRenderer({
-      antialias: false,
-      alpha: false,
-      powerPreference: 'high-performance',
-    });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
     const DPR = window.devicePixelRatio;
@@ -42,9 +39,6 @@ export class Renderer {
     light.position.set(50, 200, 100);
     light.position.multiplyScalar(1.3);
 
-    // physics
-    this.physics = new AmmoPhysics(this.scene);
-
     this.clock = new THREE.Clock();
   }
 
@@ -58,7 +52,6 @@ export class Renderer {
 
   private animate(dt: number): void {
     this.renderer.render(this.scene, this.camera);
-    this.physics.update(this.clock.getDelta() * 1000);
     g_core.getInternalNet().emit(CommonEvents.EVENT_UPDATE, dt);
   }
 
@@ -74,7 +67,7 @@ export class Renderer {
       );
   };
 
-  public getPhysics() {
-    return this.physics;
+  public getClock(): THREE.Clock {
+    return this.clock;
   }
 }

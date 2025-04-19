@@ -3,7 +3,7 @@ import type { IGameEntity } from '@/client/ecs/interfaces';
 import type { ExtendedMesh } from '@enable3d/ammo-physics';
 import AmmoTypes from 'ammojs-typed';
 import * as THREE from 'three';
-import { DummyLookupSystem } from '../DummyLookupSystem';
+import { DummySystem } from '../DummySystem';
 import { VehicleChassis } from './VehicleChassis';
 
 export class VehiclePhysics extends BaseComponent {
@@ -21,7 +21,7 @@ export class VehiclePhysics extends BaseComponent {
     const chassis = this.entity.getComponent<VehicleChassis>(VehicleChassis);
     if (!chassis) return;
 
-    const physics = g_core.getGraphics().getRenderer().getPhysics();
+    const physics = g_core.getGame().getPhysics();
     if (!physics) return;
 
     this.tuning = new Ammo.btVehicleTuning();
@@ -41,7 +41,7 @@ export class VehiclePhysics extends BaseComponent {
     const dummies = g_core
       .getGame()
       .getGameWorld()
-      .getSystem<DummyLookupSystem>(DummyLookupSystem);
+      .getSystem<DummySystem>(DummySystem);
     if (!dummies) return;
 
     const wheels: Record<
@@ -132,7 +132,7 @@ export class VehiclePhysics extends BaseComponent {
     const dummies = g_core
       .getGame()
       .getGameWorld()
-      .getSystem<DummyLookupSystem>(DummyLookupSystem);
+      .getSystem<DummySystem>(DummySystem);
     if (!dummies) return;
 
     let tm = this.vehicle.getChassisWorldTransform();

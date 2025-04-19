@@ -1,8 +1,6 @@
 import { BaseEntity } from '@/client/ecs/BaseEntity';
 import type { IGameWorld } from '@/client/ecs/interfaces';
-import { VehicleCamera } from './VehicleCamera';
 import { VehicleChassis } from './VehicleChassis';
-import { VehicleController } from './VehicleController';
 import { VehiclePhysics } from './VehiclePhysics';
 
 export class VehicleEntity extends BaseEntity {
@@ -11,16 +9,5 @@ export class VehicleEntity extends BaseEntity {
 
     this.addComponent(new VehicleChassis(this));
     this.addComponent(new VehiclePhysics(this));
-    this.addScript(new VehicleController(this));
-
-    /* Camera */
-    this.addComponent(
-      new VehicleCamera(this, {
-        distance: 5,
-        smoothing: 0.2,
-        sensitivity: 0.1,
-        height: 1,
-      }),
-    );
   }
 }

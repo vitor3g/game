@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "cd source/server && yarn start",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "check-types": "tsc --noEmit --pretty",
