@@ -1,33 +1,27 @@
 export type EntityId = string;
 
-
 export type ComponentType = string;
-
 
 export type ScriptType = string;
 export type SystemType = string;
 
 export type Tags = Set<string>;
 
-
 export enum SystemPriority {
   HIGHEST = 0,
   HIGH = 1,
   NORMAL = 2,
   LOW = 3,
-  LOWEST = 4
+  LOWEST = 4,
 }
-
 
 export interface IUpdatable {
   update(deltaTime: number): void;
 }
 
-
 export interface IFixedUpdatable {
   fixedUpdate(fixedDeltaTime: number): void;
 }
-
 
 export interface IRenderable {
   initializeRenderer(): void;
@@ -36,12 +30,10 @@ export interface IRenderable {
   destroyRenderer(): void;
 }
 
-
 export interface ILifecycle {
   initialize(): void;
   destroy(): void;
 }
-
 
 export interface ISerializable {
   toJSON(): object;
@@ -54,18 +46,15 @@ export interface IStatic {
   makeStatic(): void;
 }
 
-
 export interface IEventReceiver {
   onEvent(eventName: string, data?: any): void;
 }
-
 
 export interface ICollidable {
   onCollisionEnter(other: any): void;
   onCollisionStay(other: any): void;
   onCollisionExit(other: any): void;
 }
-
 
 export interface IEnableable {
   enabled: boolean;

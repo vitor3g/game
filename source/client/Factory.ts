@@ -1,15 +1,14 @@
-import { PhysicsLoader } from "@enable3d/ammo-physics";
-import { CoreModule } from "./core/Core";
+import { PhysicsLoader } from '@enable3d/ammo-physics';
+import { CoreModule } from './core/Core';
 
 export class dzFactoryStatic {
-  constructor() {
-  }
+  constructor() {}
 
   public async create() {
     PhysicsLoader('/data/libs/ammojs', async () => {
       const module = CoreModule();
       await module.start();
-    })
+    });
 
     return 0;
   }

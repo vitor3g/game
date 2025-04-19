@@ -2,71 +2,47 @@ import { IGameComponent } from './interfaces/IGameComponent';
 import { IGameEntity } from './interfaces/IGameEntity';
 import { ComponentType } from './interfaces/Types';
 
-
 export abstract class BaseComponent implements IGameComponent {
   abstract readonly type: ComponentType;
 
-
   readonly entity: IGameEntity;
 
-
   enabled = true;
-
 
   constructor(entity: IGameEntity) {
     this.entity = entity;
   }
 
+  onAdd(): void {}
 
-  onAdd(): void {
-  }
-
-
-  onInit(): void {
-  }
-
+  onInit(): void {}
 
   onUpdate(deltaTime: number): void {
     if (!deltaTime) return;
   }
 
+  onPreRender?(): void {}
 
-  onPreRender?(): void {
-  }
+  onPostRender?(): void {}
 
+  onRemove(): void {}
 
-  onPostRender?(): void {
-  }
+  onEnable(): void {}
 
+  onDisable(): void {}
 
-  onRemove(): void {
-  }
-
-
-  onEnable(): void {
-  }
-
-
-  onDisable(): void {
-  }
-
-
-  onDestroy(): void {
-  }
-
+  onDestroy(): void {}
 
   clone(): IGameComponent {
     throw new Error('clone() must be implemented by derived class');
   }
 
-
   toJSON(): object {
     return {
       type: this.type,
-      enabled: this.enabled
+      enabled: this.enabled,
     };
   }
-
 
   fromJSON(json: object): void {
     const data = json as any;
@@ -75,7 +51,6 @@ export abstract class BaseComponent implements IGameComponent {
     }
   }
 
-
   enable(): void {
     if (!this.enabled) {
       this.enabled = true;
@@ -83,14 +58,12 @@ export abstract class BaseComponent implements IGameComponent {
     }
   }
 
-
   disable(): void {
     if (this.enabled) {
       this.enabled = false;
       this.onDisable();
     }
   }
-
 
   toggle(): boolean {
     if (this.enabled) {
@@ -101,13 +74,15 @@ export abstract class BaseComponent implements IGameComponent {
     return this.enabled;
   }
 
-
-  getComponent<T extends IGameComponent>(componentType: new (...args: any[]) => T): T | null {
+  getComponent<T extends IGameComponent>(
+    componentType: new (...args: any[]) => T,
+  ): T | null {
     return this.entity.getComponent(componentType);
   }
 
-
-  hasComponent<T extends IGameComponent>(componentType: new (...args: any[]) => T): boolean {
+  hasComponent<T extends IGameComponent>(
+    componentType: new (...args: any[]) => T,
+  ): boolean {
     return this.entity.hasComponent(componentType);
   }
 }

@@ -1,4 +1,4 @@
-import type { ContextLogger } from "./Console";
+import type { ContextLogger } from './Console';
 
 export interface IEvent {
   type: string;
@@ -25,7 +25,7 @@ export enum EventPriority {
   LOW = 0,
   NORMAL = 1,
   HIGH = 2,
-  CRITICAL = 3
+  CRITICAL = 3,
 }
 
 /**
@@ -48,7 +48,7 @@ class EventSubscription implements IEventSubscription {
     public eventType: string,
     public callback: EventCallback<any>,
     public priority: EventPriority,
-    network: InternalNetwork
+    network: InternalNetwork,
   ) {
     this.network = network;
   }
@@ -63,7 +63,7 @@ class EventSubscription implements IEventSubscription {
  */
 export class InternalNetwork {
   private subscribers = new Map<string, IEventSubscription[]>();
-  private eventQueue: { type: string, data: any, delay: number }[] = [];
+  private eventQueue: { type: string; data: any; delay: number }[] = [];
   private eventHistory = new Map<string, any[]>();
   private isProcessing = false;
   private debugMode = false;
@@ -82,10 +82,12 @@ export class InternalNetwork {
     this.historyEnabled = historyEnabled;
     this.historyMaxEvents = historyMaxEvents;
 
-    this.logger = g_core.getConsole().NewLoggerCtx("dz::internal-network")
+    this.logger = g_core.getConsole().NewLoggerCtx('dz::internal-network');
 
     if (debugMode) {
-      this.logger.log(`InternalNetwork: System initialized with debug mode${historyEnabled ? ' and event history' : ''}`);
+      this.logger.log(
+        `InternalNetwork: System initialized with debug mode${historyEnabled ? ' and event history' : ''}`,
+      );
     }
   }
 
@@ -132,7 +134,7 @@ export class InternalNetwork {
   on<T = any>(
     eventType: string,
     callback: EventCallback<T>,
-    priority: EventPriority = EventPriority.NORMAL
+    priority: EventPriority = EventPriority.NORMAL,
   ): IEventSubscription {
     if (!this.subscribers.has(eventType)) {
       this.subscribers.set(eventType, []);
@@ -142,7 +144,7 @@ export class InternalNetwork {
       eventType,
       callback as EventCallback<any>,
       priority,
-      this
+      this,
     );
 
     const subscribers = this.subscribers.get(eventType)!;
@@ -152,7 +154,9 @@ export class InternalNetwork {
     subscribers.sort((a, b) => b.priority - a.priority);
 
     if (this.debugMode) {
-      this.logger.log(`InternalNetwork: New subscription for '${eventType}' with priority ${priority}`);
+      this.logger.log(
+        `InternalNetwork: New subscription for '${eventType}' with priority ${priority}`,
+      );
     }
 
     // Check event history and replay past events to the new subscriber
@@ -160,7 +164,9 @@ export class InternalNetwork {
       const pastEvents = this.eventHistory.get(eventType) ?? [];
 
       if (pastEvents.length > 0 && this.debugMode) {
-        this.logger.log(`InternalNetwork: Replaying ${pastEvents.length} past events for '${eventType}'`);
+        this.logger.log(
+          `InternalNetwork: Replaying ${pastEvents.length} past events for '${eventType}'`,
+        );
       }
 
       // Replay all past events to this subscriber
@@ -168,7 +174,10 @@ export class InternalNetwork {
         try {
           callback(pastData);
         } catch (error) {
-          console.error(`InternalNetwork: Error replaying past event '${eventType}':`, error);
+          console.error(
+            `InternalNetwork: Error replaying past event '${eventType}':`,
+            error,
+          );
         }
       }
     }
@@ -188,7 +197,9 @@ export class InternalNetwork {
         subscribers.splice(index, 1);
 
         if (this.debugMode) {
-          this.logger.log(`InternalNetwork: Subscription removed for '${subscription.eventType}'`);
+          this.logger.log(
+            `InternalNetwork: Subscription removed for '${subscription.eventType}'`,
+          );
         }
       }
     }
@@ -224,7 +235,9 @@ export class InternalNetwork {
     this.eventQueue.push({ type: eventType, data, delay: delayMs });
 
     if (this.debugMode) {
-      this.logger.log(`InternalNetwork: Event '${eventType}' scheduled for ${delayMs}ms`);
+      this.logger.log(
+        `InternalNetwork: Event '${eventType}' scheduled for ${delayMs}ms`,
+      );
     }
 
     if (!this.isProcessing) {
@@ -259,16 +272,20 @@ export class InternalNetwork {
     const subscribers = this.subscribers.get(eventType) ?? [];
 
     if (this.debugMode) {
-      this.logger.log(`InternalNetwork: Processing event '${eventType}' with ${subscribers.length} listeners`);
+      this.logger.log(
+        `InternalNetwork: Processing event '${eventType}' with ${subscribers.length} listeners`,
+      );
     }
-
 
     // Notifies all subscribers in priority order
     for (const subscription of subscribers) {
       try {
         subscription.callback(data);
       } catch (error) {
-        console.error(`InternalNetwork: Error processing event '${eventType}':`, error);
+        console.error(
+          `InternalNetwork: Error processing event '${eventType}':`,
+          error,
+        );
       }
     }
   }
@@ -286,7 +303,9 @@ export class InternalNetwork {
     }
 
     if (this.debugMode) {
-      this.logger.log(`InternalNetwork: System cleared - all subscriptions removed${clearHistory ? ' and history cleared' : ''}`);
+      this.logger.log(
+        `InternalNetwork: System cleared - all subscriptions removed${clearHistory ? ' and history cleared' : ''}`,
+      );
     }
   }
 }

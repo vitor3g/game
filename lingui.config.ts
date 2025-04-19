@@ -1,12 +1,12 @@
 /** @type {import('@lingui/conf').LinguiConfig} */
 export default {
-  locales: ["pt", "en"],
-  sourceLocale: "en",
+  locales: ['pt', 'en'],
+  sourceLocale: 'en',
   catalogs: [
     {
-      path: "<rootDir>/locales/{locale}/messages",
-      include: ["source"],
+      path: '<rootDir>/locales/{locale}/messages',
+      include: ['source'],
     },
   ],
-  format: "po",
+  format: 'po',
 };

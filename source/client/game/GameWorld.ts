@@ -1,7 +1,12 @@
 import { Scene } from 'three';
 import type { ContextLogger } from '../core/Console';
 import { BaseEntity } from '../ecs/BaseEntity';
-import type { EntityId, IGameEntity, IGameSystem, IGameWorld } from '../ecs/interfaces';
+import type {
+  EntityId,
+  IGameEntity,
+  IGameSystem,
+  IGameWorld,
+} from '../ecs/interfaces';
 import { CommonEvents } from '../enums/CommonEventsEnum';
 
 export class GameWorld implements IGameWorld {
@@ -9,7 +14,6 @@ export class GameWorld implements IGameWorld {
   readonly scene: Scene;
   readonly entities = new Map<EntityId, IGameEntity>();
   readonly systems: IGameSystem[] = [];
-
 
   active = true;
 
@@ -20,7 +24,6 @@ export class GameWorld implements IGameWorld {
   constructor(name: string, scene: Scene) {
     this.name = name;
     this.scene = scene;
-
 
     this.logger = g_core.getConsole().NewLoggerCtx(`dz::world:${name}`);
   }
@@ -33,7 +36,9 @@ export class GameWorld implements IGameWorld {
 
   addEntity(entity: IGameEntity): void {
     if (this.entities.has(entity.name)) {
-      this.logWarning(`Entity with ID ${entity.name} already exists in world ${this.name}`);
+      this.logWarning(
+        `Entity with ID ${entity.name} already exists in world ${this.name}`,
+      );
       return;
     }
 
@@ -70,7 +75,9 @@ export class GameWorld implements IGameWorld {
 
     this.entities.delete(id);
 
-    this.logDebug(`Entity '${entity.name}' (${entity.name}) removed from world`);
+    this.logDebug(
+      `Entity '${entity.name}' (${entity.name}) removed from world`,
+    );
 
     return true;
   }
@@ -82,7 +89,7 @@ export class GameWorld implements IGameWorld {
   findEntitiesByName(name: string): IGameEntity[] {
     const results: IGameEntity[] = [];
 
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       if (entity.name === name) {
         results.push(entity);
       }
@@ -94,7 +101,7 @@ export class GameWorld implements IGameWorld {
   findEntitiesByTag(tag: string): IGameEntity[] {
     const results: IGameEntity[] = [];
 
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       if (entity.tags.has(tag)) {
         results.push(entity);
       }
@@ -105,7 +112,9 @@ export class GameWorld implements IGameWorld {
 
   addSystem(system: IGameSystem): void {
     if (this.systems.includes(system)) {
-      this.logWarning(`System '${system.name}' already exists in world ${this.name}`);
+      this.logWarning(
+        `System '${system.name}' already exists in world ${this.name}`,
+      );
       return;
     }
 
@@ -118,7 +127,7 @@ export class GameWorld implements IGameWorld {
     if (this.initialized) {
       system.initialize();
 
-      this.entities.forEach(entity => {
+      this.entities.forEach((entity) => {
         if (system.checkEntityCompatibility(entity)) {
           system.addEntity(entity);
         }
@@ -144,7 +153,9 @@ export class GameWorld implements IGameWorld {
     return true;
   }
 
-  getSystem<T extends IGameSystem>(systemType: new (...args: any[]) => T): T | null {
+  getSystem<T extends IGameSystem>(
+    systemType: new (...args: any[]) => T,
+  ): T | null {
     for (const system of this.systems) {
       if (system instanceof systemType) {
         return system;
@@ -165,7 +176,7 @@ export class GameWorld implements IGameWorld {
       }
     }
 
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       if (entity.active) {
         entity.update(deltaTime);
       }
@@ -195,7 +206,7 @@ export class GameWorld implements IGameWorld {
       system.initialize();
     }
 
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       entity.initialize();
     });
 
@@ -203,8 +214,12 @@ export class GameWorld implements IGameWorld {
 
     this.logInfo(`World '${this.name}' initialized`);
 
-    g_core.getInternalNet().on(CommonEvents.EVENT_UPDATE, this.update.bind(this));
-    g_core.getInternalNet().emit(CommonEvents.EVENT_WORLD_INIT, this.initialized);
+    g_core
+      .getInternalNet()
+      .on(CommonEvents.EVENT_UPDATE, this.update.bind(this));
+    g_core
+      .getInternalNet()
+      .emit(CommonEvents.EVENT_WORLD_INIT, this.initialized);
   }
 
   destroy(): void {
@@ -265,7 +280,7 @@ export class GameWorld implements IGameWorld {
     return {
       name: this.name,
       active: this.active,
-      entities: entitiesData
+      entities: entitiesData,
     };
   }
 
@@ -274,7 +289,9 @@ export class GameWorld implements IGameWorld {
 
     if (data.name) {
       if (data.name !== this.name) {
-        this.logWarning(`World name mismatch: expected '${this.name}', got '${data.name}'`);
+        this.logWarning(
+          `World name mismatch: expected '${this.name}', got '${data.name}'`,
+        );
       }
     }
 
@@ -282,7 +299,7 @@ export class GameWorld implements IGameWorld {
       this.active = data.active;
     }
 
-    this.entities.forEach(entity => {
+    this.entities.forEach((entity) => {
       entity.destroy();
     });
 
@@ -344,11 +361,9 @@ export class GameWorld implements IGameWorld {
     }
   }
 
-
   private sortSystems(): void {
     this.systems.sort((a, b) => a.priority - b.priority);
   }
-
 
   private logDebug(message: string): void {
     if (this.logger?.debug) {

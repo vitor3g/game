@@ -1,5 +1,11 @@
-import { AudioLoader, FileLoader, LoadingManager, ObjectLoader, TextureLoader } from 'three';
-import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
+import {
+  AudioLoader,
+  FileLoader,
+  LoadingManager,
+  ObjectLoader,
+  TextureLoader,
+} from 'three';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { type ContextLogger } from './Console';
 
@@ -10,7 +16,7 @@ export enum AssetType {
   TEXTURE = 'texture',
   AUDIO = 'audio',
   JSON = 'json',
-  TEXT = 'text'
+  TEXT = 'text',
 }
 
 export interface AssetMetadata {
@@ -47,7 +53,7 @@ export class AssetManager {
   private pendingLoads = 0;
 
   constructor() {
-    this.logger = g_core.getConsole().NewLoggerCtx("dz::asset-manager");
+    this.logger = g_core.getConsole().NewLoggerCtx('dz::asset-manager');
 
     this.loadingManager = new LoadingManager();
     this.configureLoadingManager();
@@ -59,12 +65,14 @@ export class AssetManager {
     this.objectLoader = new ObjectLoader(this.loadingManager);
     this.fileLoader = new FileLoader(this.loadingManager);
 
-    this.logger.log("Asset Manager initialized");
+    this.logger.log('Asset Manager initialized');
   }
 
   private configureLoadingManager(): void {
     this.loadingManager.onStart = (url, itemsLoaded, itemsTotal) => {
-      this.logger.log(`Started loading: ${url}. ${itemsLoaded}/${itemsTotal} items loaded`);
+      this.logger.log(
+        `Started loading: ${url}. ${itemsLoaded}/${itemsTotal} items loaded`,
+      );
     };
 
     this.loadingManager.onLoad = () => {
@@ -79,7 +87,7 @@ export class AssetManager {
         url,
         loaded: itemsLoaded,
         total: itemsTotal,
-        percentage
+        percentage,
       });
     };
 
@@ -90,7 +98,12 @@ export class AssetManager {
     };
   }
 
-  public register(key: string, url: string, type: AssetType, dependencies: string[] = []): void {
+  public register(
+    key: string,
+    url: string,
+    type: AssetType,
+    dependencies: string[] = [],
+  ): void {
     if (this.assets.has(key)) {
       this.logger.warn(`Asset already registered with key: ${key}`);
       return;
@@ -101,14 +114,18 @@ export class AssetManager {
       url,
       type,
       loaded: false,
-      dependencies
+      dependencies,
     });
 
     this.totalAssets++;
     this.logger.debug(`Registered asset: ${key} (${url})`);
   }
 
-  public createGroup(name: string, assets: string[], onComplete?: () => void): void {
+  public createGroup(
+    name: string,
+    assets: string[],
+    onComplete?: () => void,
+  ): void {
     if (this.groups.has(name)) {
       this.logger.warn(`Group already exists: ${name}`);
       return;
@@ -117,10 +134,12 @@ export class AssetManager {
     this.groups.set(name, {
       name,
       assets,
-      onComplete
+      onComplete,
     });
 
-    this.logger.debug(`Created asset group: ${name} with ${assets.length} assets`);
+    this.logger.debug(
+      `Created asset group: ${name} with ${assets.length} assets`,
+    );
   }
 
   public async load(key: string): Promise<any> {
@@ -149,53 +168,46 @@ export class AssetManager {
       try {
         switch (asset.type) {
           case AssetType.MODEL_GLTF:
-            this.gltfLoader.load(
-              asset.url,
-              (gltf) => this.handleAssetLoaded(key, gltf, resolve)
+            this.gltfLoader.load(asset.url, (gltf) =>
+              this.handleAssetLoaded(key, gltf, resolve),
             );
             break;
 
           case AssetType.MODEL_FBX:
-            this.fbxLoader.load(
-              asset.url,
-              (fbx) => this.handleAssetLoaded(key, fbx, resolve)
+            this.fbxLoader.load(asset.url, (fbx) =>
+              this.handleAssetLoaded(key, fbx, resolve),
             );
             break;
 
           case AssetType.MODEL_JSON:
-            this.objectLoader.load(
-              asset.url,
-              (obj) => this.handleAssetLoaded(key, obj, resolve)
+            this.objectLoader.load(asset.url, (obj) =>
+              this.handleAssetLoaded(key, obj, resolve),
             );
             break;
 
           case AssetType.TEXTURE:
-            this.textureLoader.load(
-              asset.url,
-              (texture) => this.handleAssetLoaded(key, texture, resolve)
+            this.textureLoader.load(asset.url, (texture) =>
+              this.handleAssetLoaded(key, texture, resolve),
             );
             break;
 
           case AssetType.AUDIO:
-            this.audioLoader.load(
-              asset.url,
-              (buffer) => this.handleAssetLoaded(key, buffer, resolve)
+            this.audioLoader.load(asset.url, (buffer) =>
+              this.handleAssetLoaded(key, buffer, resolve),
             );
             break;
 
           case AssetType.JSON:
             this.fileLoader.setResponseType('json');
-            this.fileLoader.load(
-              asset.url,
-              (json) => this.handleAssetLoaded(key, json, resolve)
+            this.fileLoader.load(asset.url, (json) =>
+              this.handleAssetLoaded(key, json, resolve),
             );
             break;
 
           case AssetType.TEXT:
             this.fileLoader.setResponseType('text');
-            this.fileLoader.load(
-              asset.url,
-              (text) => this.handleAssetLoaded(key, text, resolve)
+            this.fileLoader.load(asset.url, (text) =>
+              this.handleAssetLoaded(key, text, resolve),
             );
             break;
 
@@ -213,7 +225,11 @@ export class AssetManager {
     });
   }
 
-  private handleAssetLoaded(key: string, data: any, resolve: (value: any) => void): void {
+  private handleAssetLoaded(
+    key: string,
+    data: any,
+    resolve: (value: any) => void,
+  ): void {
     const asset = this.assets.get(key);
     if (asset) {
       asset.loaded = true;
@@ -238,7 +254,7 @@ export class AssetManager {
       g_core.getInternalNet().emit('asset.all.loaded', {
         totalAssets: this.totalAssets,
         loadedAssets: this.loadedAssets,
-        progress: this.getLoadingProgress()
+        progress: this.getLoadingProgress(),
       });
 
       this.logger.log('All pending assets loaded completely!');
@@ -257,7 +273,7 @@ export class AssetManager {
 
     g_core.getInternalNet().emit('asset.group.start', {
       group: groupName,
-      total: group.assets.length
+      total: group.assets.length,
     });
 
     const results = new Map<string, any>();
@@ -266,19 +282,21 @@ export class AssetManager {
     this.isLoadingQueue = true;
 
     try {
-      await Promise.all(group.assets.map(async (key) => {
-        const data = await this.load(key);
-        results.set(key, data);
+      await Promise.all(
+        group.assets.map(async (key) => {
+          const data = await this.load(key);
+          results.set(key, data);
 
-        loaded++;
+          loaded++;
 
-        g_core.getInternalNet().emit('asset.group.progress', {
-          group: groupName,
-          loaded,
-          total: group.assets.length,
-          percentage: Math.round((loaded / group.assets.length) * 100)
-        });
-      }));
+          g_core.getInternalNet().emit('asset.group.progress', {
+            group: groupName,
+            loaded,
+            total: group.assets.length,
+            percentage: Math.round((loaded / group.assets.length) * 100),
+          });
+        }),
+      );
 
       this.logger.log(`Group loaded: ${groupName}`);
 
@@ -288,7 +306,7 @@ export class AssetManager {
 
       g_core.getInternalNet().emit('asset.group.complete', {
         group: groupName,
-        results
+        results,
       });
 
       return results;
@@ -297,7 +315,7 @@ export class AssetManager {
 
       g_core.getInternalNet().emit('asset.group.error', {
         group: groupName,
-        error
+        error,
       });
 
       throw error;
@@ -347,14 +365,14 @@ export class AssetManager {
         return;
       }
 
-      group.assets.forEach(key => this.unload(key));
+      group.assets.forEach((key) => this.unload(key));
       this.logger.log(`Group unloaded: ${groupName}`);
     } else {
       this.assets.forEach((_asset, key) => {
         this.unload(key);
       });
 
-      this.logger.log("All assets unloaded");
+      this.logger.log('All assets unloaded');
     }
   }
 
@@ -364,7 +382,11 @@ export class AssetManager {
   }
 
   public areAllAssetsLoaded(): boolean {
-    return !this.isLoadingQueue && this.pendingLoads === 0 && this.loadedAssets === this.totalAssets;
+    return (
+      !this.isLoadingQueue &&
+      this.pendingLoads === 0 &&
+      this.loadedAssets === this.totalAssets
+    );
   }
 
   public waitForAllAssetsLoaded(): Promise<void> {
@@ -382,7 +404,7 @@ export class AssetManager {
   }
 
   public preloadCriticalAssets(): Promise<void> {
-    this.logger.log("Preloading critical assets...");
+    this.logger.log('Preloading critical assets...');
 
     const criticalAssets: any[] = [
       // Exemplos: UI, texturas do carro principal, etc.
@@ -391,14 +413,14 @@ export class AssetManager {
 
     return new Promise((resolve) => {
       if (criticalAssets.length === 0) {
-        this.logger.log("No critical assets defined");
+        this.logger.log('No critical assets defined');
         resolve();
         return;
       }
 
-      Promise.all(criticalAssets.map(key => this.load(key)))
+      Promise.all(criticalAssets.map((key) => this.load(key)))
         .then(() => {
-          this.logger.log("Critical assets preloaded");
+          this.logger.log('Critical assets preloaded');
           resolve();
         })
         .catch((error) => {

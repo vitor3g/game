@@ -1,11 +1,11 @@
-import { Game } from "../game/Game";
-import { Graphics } from "../graphics/Graphics";
-import { AssetManager } from "./AssetManager";
-import { AudioManager } from "./AudioManager";
-import { Console, type ContextLogger } from "./Console";
-import { Debug } from "./Debug";
-import { InternalNetwork } from "./InternalNetwork";
-import { Keybinds } from "./Keybindings";
+import { Game } from '../game/Game';
+import { Graphics } from '../graphics/Graphics';
+import { AssetManager } from './AssetManager';
+import { AudioManager } from './AudioManager';
+import { Console, type ContextLogger } from './Console';
+import { Debug } from './Debug';
+import { InternalNetwork } from './InternalNetwork';
+import { Keybinds } from './Keybindings';
 
 export class Core {
   private readonly logger: ContextLogger;
@@ -22,20 +22,18 @@ export class Core {
     window.g_core = this;
     this.console = new Console();
     this.internalNetwork = new InternalNetwork();
-    this.logger = this.console.NewLoggerCtx("dz::core");
+    this.logger = this.console.NewLoggerCtx('dz::core');
 
     this.graphics = new Graphics();
     this.assetManager = new AssetManager();
     this.audioManager = new AudioManager();
     this.keybinds = new Keybinds();
-    this.game = new Game()
+    this.game = new Game();
     this.debug = new Debug();
 
     this.internalNetwork.setDebugMode(false);
 
-
-
-    this.logger.log("Core");
+    this.logger.log('Core');
   }
 
   public async start() {
@@ -43,11 +41,6 @@ export class Core {
     this.graphics.start();
 
     await this.game.start();
-  }
-
-
-  public async _hookAmmoPhysics() {
-
   }
 
   public getGraphics() {

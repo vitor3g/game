@@ -1,6 +1,6 @@
-import { BaseEntity } from "@/client/ecs/BaseEntity";
-import type { IGameWorld } from "@/client/ecs/interfaces";
-import { SkyComponent } from "./SkyComponent";
+import { BaseEntity } from '@/client/ecs/BaseEntity';
+import type { IGameWorld } from '@/client/ecs/interfaces';
+import { SkyComponent } from './SkyComponent';
 
 export class SkyEntity extends BaseEntity {
   constructor(world: IGameWorld, name = 'SkyEntity') {
@@ -9,6 +9,6 @@ export class SkyEntity extends BaseEntity {
     this.tags.add('environment');
 
     const skyComponent = new SkyComponent(this);
-    this.addComponent(skyComponent)
+    this.addComponent(skyComponent);
   }
 }

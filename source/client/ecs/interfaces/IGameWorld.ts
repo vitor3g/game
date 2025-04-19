@@ -3,31 +3,22 @@ import { IGameEntity } from './IGameEntity';
 import { IGameSystem } from './IGameSystem';
 import { EntityId } from './Types';
 
-
 export interface IGameWorld {
-
   readonly name: string;
-
 
   readonly scene: Scene;
 
-
   readonly entities: Map<EntityId, IGameEntity>;
-
 
   readonly systems: IGameSystem[];
 
   active: boolean;
 
-
   createEntity(name?: string): IGameEntity;
-
 
   addEntity(entity: IGameEntity): void;
 
-
   removeEntity(entityOrId: IGameEntity | EntityId): boolean;
-
 
   getEntity(id: EntityId): IGameEntity | null;
 
@@ -63,7 +54,9 @@ export interface IGameWorld {
    * @param systemType Tipo do sistema
    * @returns O sistema encontrado ou null
    */
-  getSystem<T extends IGameSystem>(systemType: new (...args: any[]) => T): T | null;
+  getSystem<T extends IGameSystem>(
+    systemType: new (...args: any[]) => T,
+  ): T | null;
 
   /**
    * Atualiza o mundo e todos os sistemas/entidades

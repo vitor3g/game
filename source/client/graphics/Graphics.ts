@@ -1,6 +1,6 @@
-import type { ContextLogger } from "../core/Console";
-import { Gui } from "./GUI";
-import { Renderer } from "./Renderer";
+import type { ContextLogger } from '../core/Console';
+import { Gui } from './GUI';
+import { Renderer } from './Renderer';
 
 export class Graphics {
   private readonly logger: ContextLogger;
@@ -8,7 +8,7 @@ export class Graphics {
   private readonly gui: Gui;
 
   constructor() {
-    this.logger = g_core.getConsole().NewLoggerCtx("dz::graphics")
+    this.logger = g_core.getConsole().NewLoggerCtx('dz::graphics');
     this.renderer = new Renderer(this);
     this.gui = new Gui(this);
   }

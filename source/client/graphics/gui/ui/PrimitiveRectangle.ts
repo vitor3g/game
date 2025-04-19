@@ -1,6 +1,6 @@
-import { hexToImVec4 } from "@/shared/imgui.utils";
-import { ImGui } from "@zhobo63/imgui-ts";
-import { Primitive } from "../Primitive";
+import { hexToImVec4 } from '@/shared/imgui.utils';
+import { ImGui } from '@zhobo63/imgui-ts';
+import { Primitive } from '../Primitive';
 
 export interface RectanglePrimitiveProps {
   x: number;

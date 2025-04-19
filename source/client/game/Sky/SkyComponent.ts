@@ -1,6 +1,6 @@
-import { BaseComponent } from "@/client/ecs/BaseComponent";
-import type { IGameEntity } from "@/client/ecs/interfaces";
-import * as THREE from "three";
+import { BaseComponent } from '@/client/ecs/BaseComponent';
+import type { IGameEntity } from '@/client/ecs/interfaces';
+import * as THREE from 'three';
 import { Sky } from 'three/addons/objects/Sky.js';
 
 export class SkyComponent extends BaseComponent {
@@ -26,14 +26,15 @@ export class SkyComponent extends BaseComponent {
     this.mieDirectionalG = 0.7;
     this.elevation = 2;
     this.azimuth = 180;
-    this.exposure = g_core.getGraphics().getRenderer().renderer.toneMappingExposure
+    this.exposure = g_core
+      .getGraphics()
+      .getRenderer().renderer.toneMappingExposure;
   }
 
   public onInit(): void {
     this.sky = new Sky();
     this.sky.scale.setScalar(450000);
     g_core.getGraphics().getRenderer().scene.add(this.sky);
-
 
     const uniforms = this.sky.material.uniforms;
     uniforms.turbidity.value = this.turbidity;
@@ -46,6 +47,7 @@ export class SkyComponent extends BaseComponent {
     this.sun.setFromSphericalCoords(1, phi, theta);
 
     uniforms.sunPosition.value.copy(this.sun);
-    g_core.getGraphics().getRenderer().renderer.toneMappingExposure = this.exposure;
+    g_core.getGraphics().getRenderer().renderer.toneMappingExposure =
+      this.exposure;
   }
 }

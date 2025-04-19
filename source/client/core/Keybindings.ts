@@ -1,4 +1,4 @@
-import { CommonEvents } from "../enums/CommonEventsEnum";
+import { CommonEvents } from '../enums/CommonEventsEnum';
 
 export class Keybinds {
   private keys = new Set<string>();
@@ -18,9 +18,7 @@ export class Keybinds {
       this.keys.add(e.code);
       this.lastKeyPressed = e.code;
 
-
       g_core.getInternalNet().emit(CommonEvents.EVENT_KEYDOWN, e.key);
-
     });
 
     window.addEventListener('keyup', (e) => {

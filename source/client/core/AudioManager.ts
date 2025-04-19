@@ -1,14 +1,14 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 import { Audio, AudioListener, AudioLoader, PositionalAudio } from 'three';
 import { type ContextLogger } from './Console';
 
 // Tipos de som
 export enum SoundType {
-  MUSIC = 'music',       // Música de fundo
-  SFX = 'sfx',           // Efeitos sonoros
-  UI = 'ui',             // Sons de interface
-  AMBIENT = 'ambient',   // Sons ambientes
-  VEHICLE = 'vehicle'    // Sons específicos dos veículos
+  MUSIC = 'music', // Música de fundo
+  SFX = 'sfx', // Efeitos sonoros
+  UI = 'ui', // Sons de interface
+  AMBIENT = 'ambient', // Sons ambientes
+  VEHICLE = 'vehicle', // Sons específicos dos veículos
 }
 
 // Configuração de som
@@ -19,8 +19,8 @@ export interface SoundConfig {
   volume?: number;
   autoplay?: boolean;
   spatial?: boolean;
-  radius?: number;       // Para sons posicionais
-  rolloffFactor?: number;// Para sons posicionais
+  radius?: number; // Para sons posicionais
+  rolloffFactor?: number; // Para sons posicionais
 }
 
 // Classe para representar um som
@@ -31,7 +31,11 @@ class Sound {
   public config: SoundConfig;
   public isPlaying = false;
 
-  constructor(key: string, audio: Audio | PositionalAudio, config: SoundConfig) {
+  constructor(
+    key: string,
+    audio: Audio | PositionalAudio,
+    config: SoundConfig,
+  ) {
     this.key = key;
     this.audio = audio;
     this.config = config;
@@ -44,7 +48,8 @@ class Sound {
     // Para áudio posicional
     if (config.spatial && audio instanceof PositionalAudio) {
       if (config.radius !== undefined) audio.setRefDistance(config.radius);
-      if (config.rolloffFactor !== undefined) audio.setRolloffFactor(config.rolloffFactor);
+      if (config.rolloffFactor !== undefined)
+        audio.setRolloffFactor(config.rolloffFactor);
     }
 
     // Autoplay
@@ -152,7 +157,7 @@ export class AudioManager {
   private crossfadeDuration = 1.5;
 
   constructor() {
-    this.logger = g_core.getConsole().NewLoggerCtx("dz::audio-manager");
+    this.logger = g_core.getConsole().NewLoggerCtx('dz::audio-manager');
 
     this.listener = new AudioListener();
     this.loader = new AudioLoader();
@@ -165,7 +170,7 @@ export class AudioManager {
 
     this.setupEventListeners();
 
-    this.logger.log("Audio Manager initialized");
+    this.logger.log('Audio Manager initialized');
   }
 
   private setupEventListeners(): void {
@@ -186,11 +191,9 @@ export class AudioManager {
     });
   }
 
-
   public getListener(): AudioListener {
     return this.listener;
   }
-
 
   public create(buffer: AudioBuffer, config: SoundConfig): Sound | null {
     try {
@@ -224,7 +227,6 @@ export class AudioManager {
     }
   }
 
-
   public async load(url: string, config: SoundConfig): Promise<Sound | null> {
     try {
       const buffer = await new Promise<AudioBuffer>((resolve, reject) => {
@@ -238,11 +240,9 @@ export class AudioManager {
     }
   }
 
-
   public get(key: string): Sound | null {
     return this.sounds.get(key) ?? null;
   }
-
 
   public play(key: string): Sound | null {
     const sound = this.get(key);
@@ -252,7 +252,6 @@ export class AudioManager {
     }
     return null;
   }
-
 
   public pause(key: string): void {
     const sound = this.get(key);
@@ -268,12 +267,11 @@ export class AudioManager {
     }
   }
 
-
   public setVolumeForType(type: SoundType, volume: number): void {
     const normalizedVolume = Math.max(0, Math.min(1, volume));
     this.volumeLevels.set(type, normalizedVolume);
 
-    this.sounds.forEach(sound => {
+    this.sounds.forEach((sound) => {
       if (sound.type === type) {
         sound.setVolume(normalizedVolume * this.globalVolume);
       }
@@ -282,11 +280,10 @@ export class AudioManager {
     this.logger.debug(`Volume for ${type} set to ${normalizedVolume}`);
   }
 
-
   public setGlobalVolume(volume: number): void {
     this.globalVolume = Math.max(0, Math.min(1, volume));
 
-    this.sounds.forEach(sound => {
+    this.sounds.forEach((sound) => {
       const typeVolume = this.volumeLevels.get(sound.type) ?? 1.0;
       sound.setVolume(typeVolume * this.globalVolume);
     });
@@ -294,18 +291,17 @@ export class AudioManager {
     this.logger.debug(`Global volume set to ${this.globalVolume}`);
   }
 
-
   public toggleMute(): boolean {
     this.muted = !this.muted;
 
     if (this.muted) {
-      this.sounds.forEach(sound => {
+      this.sounds.forEach((sound) => {
         if (sound.isPlaying) {
           sound.audio.setVolume(0);
         }
       });
     } else {
-      this.sounds.forEach(sound => {
+      this.sounds.forEach((sound) => {
         if (sound.isPlaying) {
           const typeVolume = this.volumeLevels.get(sound.type) ?? 1.0;
           sound.audio.setVolume(typeVolume * this.globalVolume);
@@ -318,7 +314,7 @@ export class AudioManager {
   }
 
   public pauseAll(exceptType?: SoundType): void {
-    this.sounds.forEach(sound => {
+    this.sounds.forEach((sound) => {
       if (!exceptType || sound.type !== exceptType) {
         if (sound.isPlaying) {
           sound.pause();
@@ -327,11 +323,10 @@ export class AudioManager {
     });
   }
 
-
   public resumeAll(exceptType?: SoundType): void {
     if (this.muted) return;
 
-    this.sounds.forEach(sound => {
+    this.sounds.forEach((sound) => {
       if (!exceptType || sound.type !== exceptType) {
         // Apenas retoma sons que estavam tocando antes
         if (sound.config.autoplay || sound.isPlaying) {
@@ -341,7 +336,10 @@ export class AudioManager {
     });
   }
 
-  public async crossfadeMusic(newMusicKey: string, duration: number = this.crossfadeDuration): Promise<void> {
+  public async crossfadeMusic(
+    newMusicKey: string,
+    duration: number = this.crossfadeDuration,
+  ): Promise<void> {
     const newMusic = this.get(newMusicKey);
 
     if (!newMusic) {
@@ -363,7 +361,6 @@ export class AudioManager {
     newMusic.fadeIn(duration);
   }
 
-
   public setupEngineSound(vehicleObj: any, soundKey: string): void {
     const sound = this.get(soundKey);
     if (!sound || !(sound.audio instanceof PositionalAudio)) {
@@ -381,10 +378,9 @@ export class AudioManager {
 
     g_core.getInternalNet().emit('audio.engine.setup', {
       vehicle: vehicleObj,
-      sound: sound
+      sound: sound,
     });
   }
-
 
   public updateEngineSound(soundKey: string, rpm: number, speed: number): void {
     const sound = this.get(soundKey);
@@ -398,13 +394,16 @@ export class AudioManager {
     sound.setPlaybackRate(pitch);
 
     const baseVolume = this.volumeLevels.get(SoundType.VEHICLE) ?? 0.8;
-    const volumeBoost = Math.min(0.3, speed / 150 * 0.3);
+    const volumeBoost = Math.min(0.3, (speed / 150) * 0.3);
 
     sound.setVolume((baseVolume + volumeBoost) * this.globalVolume);
   }
 
-
-  public playSoundAt(key: string, position: THREE.Vector3, volume = 1.0): Sound | null {
+  public playSoundAt(
+    key: string,
+    position: THREE.Vector3,
+    volume = 1.0,
+  ): Sound | null {
     const sound = this.get(key);
 
     if (!sound || !(sound.audio instanceof PositionalAudio)) {
@@ -420,7 +419,6 @@ export class AudioManager {
 
     return sound;
   }
-
 
   public playOneShot(key: string, volume = 1.0): void {
     const sound = this.get(key);
@@ -439,8 +437,12 @@ export class AudioManager {
     sound.play();
   }
 
-
-  public createSoundPool(baseKey: string, count: number, url: string, config: SoundConfig): string[] {
+  public createSoundPool(
+    baseKey: string,
+    count: number,
+    url: string,
+    config: SoundConfig,
+  ): string[] {
     const soundKeys: string[] = [];
 
     for (let i = 0; i < count; i++) {
@@ -450,7 +452,7 @@ export class AudioManager {
       const poolConfig = {
         ...config,
         key: pooledKey,
-        autoplay: false
+        autoplay: false,
       };
 
       this.load(url, poolConfig);
@@ -458,7 +460,6 @@ export class AudioManager {
 
     return soundKeys;
   }
-
 
   public playFromPool(baseKey: string, count: number): Sound | null {
     for (let i = 0; i < count; i++) {
@@ -485,8 +486,10 @@ export class AudioManager {
     return null;
   }
 
-
-  public async crossfadeAmbient(newAmbientKey: string, duration: number = this.crossfadeDuration): Promise<void> {
+  public async crossfadeAmbient(
+    newAmbientKey: string,
+    duration: number = this.crossfadeDuration,
+  ): Promise<void> {
     const newAmbient = this.get(newAmbientKey);
 
     if (!newAmbient) {
@@ -508,8 +511,10 @@ export class AudioManager {
     newAmbient.fadeIn(duration);
   }
 
-
-  public createAmbientMixer(keys: string[], initialWeights: number[] = []): void {
+  public createAmbientMixer(
+    keys: string[],
+    initialWeights: number[] = [],
+  ): void {
     if (keys.length === 0) {
       this.logger.error('No ambient sounds provided for mixer');
       return;
@@ -525,7 +530,7 @@ export class AudioManager {
       sounds.push(sound);
     }
 
-    sounds.forEach(sound => {
+    sounds.forEach((sound) => {
       sound.setVolume(0);
       if (!sound.isPlaying) {
         sound.play();
@@ -549,7 +554,7 @@ export class AudioManager {
       return;
     }
 
-    const normalizedWeights = weights.map(w => Math.max(0, w) / sum);
+    const normalizedWeights = weights.map((w) => Math.max(0, w) / sum);
 
     for (let i = 0; i < keys.length; i++) {
       const sound = this.get(keys[i]);
@@ -560,9 +565,8 @@ export class AudioManager {
     }
   }
 
-
   public dispose(): void {
-    this.sounds.forEach(sound => {
+    this.sounds.forEach((sound) => {
       if (sound.isPlaying) {
         sound.stop();
       }
@@ -572,6 +576,6 @@ export class AudioManager {
     this.currentMusic = null;
     this.currentAmbient = null;
 
-    this.logger.log("Audio Manager disposed");
+    this.logger.log('Audio Manager disposed');
   }
 }

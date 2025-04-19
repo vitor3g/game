@@ -1,9 +1,9 @@
-import { hookGlobalConsole } from "@/shared/shared.utils";
-import { ImGui } from "@zhobo63/imgui-ts";
-import { CommonEvents } from "../enums/CommonEventsEnum";
-import { KeyboardKeys } from "../enums/KeysEnum";
+import { hookGlobalConsole } from '@/shared/shared.utils';
+import { ImGui } from '@zhobo63/imgui-ts';
+import { CommonEvents } from '../enums/CommonEventsEnum';
+import { KeyboardKeys } from '../enums/KeysEnum';
 
-type LogLevel = "log" | "error" | "warn" | "debug" | "verbose" | "fatal";
+type LogLevel = 'log' | 'error' | 'warn' | 'debug' | 'verbose' | 'fatal';
 
 export interface ContextLogger {
   log(message: any, ...optionalParams: any[]): void;
@@ -22,16 +22,19 @@ interface MenuItem {
 
 export class Console {
   private history: {
-    text: string,
-    color: number[],
-    level?: LogLevel,
-    context?: string,
-    contextColor?: number[]
+    text: string;
+    color: number[];
+    level?: LogLevel;
+    context?: string;
+    contextColor?: number[];
   }[];
   private inputBuffer: string;
   private commandHistory: string[] = [];
   private historyIndex: number;
-  private commands: Record<string, { callback: (args: string[]) => void, description: string }>;
+  private commands: Record<
+    string,
+    { callback: (args: string[]) => void; description: string }
+  >;
   private isOpen: boolean;
   private scrollToBottom: boolean;
   private backgroundColor: number[];
@@ -59,12 +62,12 @@ export class Console {
     [0.5, 0.5, 0.0, 1.0],
     [0.282, 0.239, 0.545, 1.0],
     [0.855, 0.439, 0.839, 1.0],
-    [0.0, 0.5, 0.5, 1.0]
+    [0.0, 0.5, 0.5, 1.0],
   ];
 
   constructor() {
     this.history = [];
-    this.inputBuffer = "";
+    this.inputBuffer = '';
     this.commandHistory = [];
     this.historyIndex = -1;
     this.commands = {};
@@ -79,111 +82,153 @@ export class Console {
     this.verboseColor = [0.8, 0.5, 0.8, 1.0];
     this.fatalColor = [1.0, 0.0, 0.0, 1.0];
     this.menus = {
-      "Overlays": [],
-      "Launch": [],
-      "Quit": [],
-      "Tools": [],
-      "Game": [],
-      "Logs": []
+      Overlays: [],
+      Launch: [],
+      Quit: [],
+      Tools: [],
+      Game: [],
+      Logs: [],
     };
 
     this.activeLogLevels = new Set<LogLevel>([
-      "log", "error", "warn", "debug", "verbose", "fatal"
+      'log',
+      'error',
+      'warn',
+      'debug',
+      'verbose',
+      'fatal',
     ]);
 
     this.contextColors = new Map<string, number[]>();
 
-    this.registerCommand("help", this.cmdHelp.bind(this), "Shows the list of available commands");
-    this.registerCommand("clear", this.cmdClear.bind(this), "Clean the console");
-    this.registerCommand("quit", this.cmdQuit.bind(this), "Close the console");
-    this.registerCommand("loglevel", this.cmdLogLevel.bind(this), "Sets visible log levels (e.g. loglevel log error warn)");
+    this.registerCommand(
+      'help',
+      this.cmdHelp.bind(this),
+      'Shows the list of available commands',
+    );
+    this.registerCommand(
+      'clear',
+      this.cmdClear.bind(this),
+      'Clean the console',
+    );
+    this.registerCommand('quit', this.cmdQuit.bind(this), 'Close the console');
+    this.registerCommand(
+      'loglevel',
+      this.cmdLogLevel.bind(this),
+      'Sets visible log levels (e.g. loglevel log error warn)',
+    );
 
-    this.setMenuItems("Logs", [
+    this.setMenuItems('Logs', [
       {
-        label: "All logs",
-        callback: () => this.setLogLevels(["log", "error", "warn", "debug", "verbose", "fatal"])
+        label: 'All logs',
+        callback: () =>
+          this.setLogLevels([
+            'log',
+            'error',
+            'warn',
+            'debug',
+            'verbose',
+            'fatal',
+          ]),
       },
       {
-        label: "Essentials only",
-        callback: () => this.setLogLevels(["log", "error", "warn", "fatal"])
+        label: 'Essentials only',
+        callback: () => this.setLogLevels(['log', 'error', 'warn', 'fatal']),
       },
       {
-        label: "Only errors",
-        callback: () => this.setLogLevels(["error", "fatal"])
+        label: 'Only errors',
+        callback: () => this.setLogLevels(['error', 'fatal']),
       },
       {
-        label: "Development logs",
-        callback: () => this.setLogLevels(["debug", "verbose", "error"])
-      }
+        label: 'Development logs',
+        callback: () => this.setLogLevels(['debug', 'verbose', 'error']),
+      },
     ]);
-
 
     hookGlobalConsole(this);
   }
 
   private _onUnhandledRejection(event: PromiseRejectionEvent) {
-    this.error(event.reason)
+    this.error(event.reason);
   }
 
   public async start() {
-    g_core.getInternalNet().on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
-      if (key === KeyboardKeys.F8) {
-        this.toggle();
-        this.clearInputBuffer();
-      }
-    });
+    g_core
+      .getInternalNet()
+      .on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
+        if (key === KeyboardKeys.F8) {
+          this.toggle();
+          this.clearInputBuffer();
+        }
+      });
 
-    g_core.getInternalNet().on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
-      if (key === KeyboardKeys.Enter && this.isOpen && this.inputBuffer.trim() !== "") {
-        const currentCommand = this.inputBuffer;
-        this.executeCommand(currentCommand);
-        this.clearInputBuffer();
-      }
-    });
+    g_core
+      .getInternalNet()
+      .on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {
+        if (
+          key === KeyboardKeys.Enter &&
+          this.isOpen &&
+          this.inputBuffer.trim() !== ''
+        ) {
+          const currentCommand = this.inputBuffer;
+          this.executeCommand(currentCommand);
+          this.clearInputBuffer();
+        }
+      });
   }
 
   public NewLoggerCtx(context: string): ContextLogger {
     if (!this.contextColors.has(context)) {
-      const color = this.predefinedColors[this.colorIndex % this.predefinedColors.length];
+      const color =
+        this.predefinedColors[this.colorIndex % this.predefinedColors.length];
       this.contextColors.set(context, color);
       this.colorIndex++;
     }
 
     return {
       log: (message: any, ...optionalParams: any[]) => {
-        this.logWithContext(context, "log", message, ...optionalParams);
+        this.logWithContext(context, 'log', message, ...optionalParams);
       },
       error: (message: any, ...optionalParams: any[]) => {
-        this.logWithContext(context, "error", message, ...optionalParams);
+        this.logWithContext(context, 'error', message, ...optionalParams);
       },
       warn: (message: any, ...optionalParams: any[]) => {
-        this.logWithContext(context, "warn", message, ...optionalParams);
+        this.logWithContext(context, 'warn', message, ...optionalParams);
       },
       debug: (message: any, ...optionalParams: any[]) => {
-        this.logWithContext(context, "debug", message, ...optionalParams);
+        this.logWithContext(context, 'debug', message, ...optionalParams);
       },
       verbose: (message: any, ...optionalParams: any[]) => {
-        this.logWithContext(context, "verbose", message, ...optionalParams);
+        this.logWithContext(context, 'verbose', message, ...optionalParams);
       },
       fatal: (message: any, ...optionalParams: any[]) => {
-        this.logWithContext(context, "fatal", message, ...optionalParams);
-      }
+        this.logWithContext(context, 'fatal', message, ...optionalParams);
+      },
     };
   }
 
-  private logWithContext(context: string, level: LogLevel, message: any, ...optionalParams: any[]): void {
+  private logWithContext(
+    context: string,
+    level: LogLevel,
+    message: any,
+    ...optionalParams: any[]
+  ): void {
     if (!this.activeLogLevels.has(level)) return;
 
     const contextColor = this.contextColors.get(context) ?? this.textColor;
     const levelColor = this.getLevelColor(level);
-    const formattedMessage = this.formatLogMessage(level, message, optionalParams);
+    const formattedMessage = this.formatLogMessage(
+      level,
+      message,
+      optionalParams,
+    );
 
     this.history.push({
       text: formattedMessage,
       color: levelColor,
       level: level,
       context: context,
-      contextColor: contextColor
+      contextColor: contextColor,
     });
 
     this.scrollToBottom = true;
@@ -191,12 +236,18 @@ export class Console {
 
   private getLevelColor(level: LogLevel): number[] {
     switch (level) {
-      case "error": return this.errorColor;
-      case "warn": return this.warnColor;
-      case "debug": return this.debugColor;
-      case "verbose": return this.verboseColor;
-      case "fatal": return this.fatalColor;
-      default: return this.textColor;
+      case 'error':
+        return this.errorColor;
+      case 'warn':
+        return this.warnColor;
+      case 'debug':
+        return this.debugColor;
+      case 'verbose':
+        return this.verboseColor;
+      case 'fatal':
+        return this.fatalColor;
+      default:
+        return this.textColor;
     }
   }
 
@@ -214,21 +265,23 @@ export class Console {
 
   public setLogLevels(levels: LogLevel[]): void {
     this.activeLogLevels = new Set(levels);
-    this.log(`Defined log levels: ${levels.join(", ")}`);
+    this.log(`Defined log levels: ${levels.join(', ')}`);
   }
 
   private cmdLogLevel(args: string[]): void {
     if (args.length === 0) {
-      this.error("Usage: loglevel <level 1> <level 2> ... (available levels: log, error, warn, debug, verbose, fatal)");
+      this.error(
+        'Usage: loglevel <level 1> <level 2> ... (available levels: log, error, warn, debug, verbose, fatal)',
+      );
       return;
     }
 
-    const validLevels = args.filter(level =>
-      ["log", "error", "warn", "debug", "verbose", "fatal"].includes(level)
+    const validLevels = args.filter((level) =>
+      ['log', 'error', 'warn', 'debug', 'verbose', 'fatal'].includes(level),
     ) as LogLevel[];
 
     if (validLevels.length === 0) {
-      this.error("No valid log level provided");
+      this.error('No valid log level provided');
       return;
     }
 
@@ -236,54 +289,85 @@ export class Console {
   }
 
   public log(message: any, ...optionalParams: any[]): void {
-    if (this.activeLogLevels.has("log")) {
-      const formattedMessage = this.formatLogMessage("log", message, optionalParams);
-      this.addMessage(formattedMessage, this.textColor, "log");
+    if (this.activeLogLevels.has('log')) {
+      const formattedMessage = this.formatLogMessage(
+        'log',
+        message,
+        optionalParams,
+      );
+      this.addMessage(formattedMessage, this.textColor, 'log');
     }
   }
 
   public error(message: any, ...optionalParams: any[]): void {
-    if (this.activeLogLevels.has("error")) {
-      const formattedMessage = this.formatLogMessage("error", message, optionalParams);
-      this.addMessage(formattedMessage, this.errorColor, "error");
+    if (this.activeLogLevels.has('error')) {
+      const formattedMessage = this.formatLogMessage(
+        'error',
+        message,
+        optionalParams,
+      );
+      this.addMessage(formattedMessage, this.errorColor, 'error');
     }
   }
 
   public warn(message: any, ...optionalParams: any[]): void {
-    if (this.activeLogLevels.has("warn")) {
-      const formattedMessage = this.formatLogMessage("warn", message, optionalParams);
-      this.addMessage(formattedMessage, this.warnColor, "warn");
+    if (this.activeLogLevels.has('warn')) {
+      const formattedMessage = this.formatLogMessage(
+        'warn',
+        message,
+        optionalParams,
+      );
+      this.addMessage(formattedMessage, this.warnColor, 'warn');
     }
   }
 
   public debug(message: any, ...optionalParams: any[]): void {
-    if (this.activeLogLevels.has("debug")) {
-      const formattedMessage = this.formatLogMessage("debug", message, optionalParams);
-      this.addMessage(formattedMessage, this.debugColor, "debug");
+    if (this.activeLogLevels.has('debug')) {
+      const formattedMessage = this.formatLogMessage(
+        'debug',
+        message,
+        optionalParams,
+      );
+      this.addMessage(formattedMessage, this.debugColor, 'debug');
     }
   }
 
   public verbose(message: any, ...optionalParams: any[]): void {
-    if (this.activeLogLevels.has("verbose")) {
-      const formattedMessage = this.formatLogMessage("verbose", message, optionalParams);
-      this.addMessage(formattedMessage, this.verboseColor, "verbose");
+    if (this.activeLogLevels.has('verbose')) {
+      const formattedMessage = this.formatLogMessage(
+        'verbose',
+        message,
+        optionalParams,
+      );
+      this.addMessage(formattedMessage, this.verboseColor, 'verbose');
     }
   }
 
   public fatal(message: any, ...optionalParams: any[]): void {
-    if (this.activeLogLevels.has("fatal")) {
-      const formattedMessage = this.formatLogMessage("fatal", message, optionalParams);
-      this.addMessage(formattedMessage, this.fatalColor, "fatal");
+    if (this.activeLogLevels.has('fatal')) {
+      const formattedMessage = this.formatLogMessage(
+        'fatal',
+        message,
+        optionalParams,
+      );
+      this.addMessage(formattedMessage, this.fatalColor, 'fatal');
     }
   }
 
-  private formatLogMessage(_level: LogLevel, message: any, optionalParams: any[]): string {
-    let messageStr = typeof message === 'object' ? JSON.stringify(message) : String(message);
+  private formatLogMessage(
+    _level: LogLevel,
+    message: any,
+    optionalParams: any[],
+  ): string {
+    let messageStr =
+      typeof message === 'object' ? JSON.stringify(message) : String(message);
 
     if (optionalParams && optionalParams.length > 0) {
-      const params = optionalParams.map(param =>
-        typeof param === 'object' ? JSON.stringify(param) : String(param)
-      ).join(' ');
+      const params = optionalParams
+        .map((param) =>
+          typeof param === 'object' ? JSON.stringify(param) : String(param),
+        )
+        .join(' ');
 
       messageStr = `${messageStr} ${params}`;
     }
@@ -291,24 +375,32 @@ export class Console {
     return `${messageStr}`;
   }
 
-  public addMessage(message: string, color: number[] = this.textColor, level?: LogLevel): void {
+  public addMessage(
+    message: string,
+    color: number[] = this.textColor,
+    level?: LogLevel,
+  ): void {
     this.history.push({
       text: message,
       color: color,
-      level: level
+      level: level,
     });
     this.scrollToBottom = true;
   }
 
-  public registerCommand(name: string, callback: (args: string[]) => void, description = ""): void {
+  public registerCommand(
+    name: string,
+    callback: (args: string[]) => void,
+    description = '',
+  ): void {
     this.commands[name] = {
       callback: callback,
-      description: description
+      description: description,
     };
   }
 
   public executeCommand(input: string): void {
-    if (!input || input.trim() === "") return;
+    if (!input || input.trim() === '') return;
 
     this.commandHistory.push(input);
     if (this.commandHistory.length > 50) {
@@ -319,7 +411,7 @@ export class Console {
     this.addMessage(`> ${input}`, this.commandColor);
 
     // Parse command and arguments
-    const parts = input.split(" ");
+    const parts = input.split(' ');
 
     // Remove leading slash if present
     const command = parts[0];
@@ -329,46 +421,48 @@ export class Console {
     if (this.commands[command]) {
       this.commands[command].callback(args);
     } else {
-      this.error(`Unknown command: ${command}. Type help to see the list of commands.`);
+      this.error(
+        `Unknown command: ${command}. Type help to see the list of commands.`,
+      );
     }
   }
 
   public cmdHelp(): void {
-    this.log("Available commands:");
+    this.log('Available commands:');
     for (const cmd in this.commands) {
       this.log(`  ${cmd} - ${this.commands[cmd].description}`);
     }
   }
 
   public clearInputBuffer(): void {
-    this.inputBuffer = "";
+    this.inputBuffer = '';
   }
 
   public cmdClear(): void {
     this.history = [];
-    this.log("Clean console");
+    this.log('Clean console');
   }
 
   public cmdQuit(): void {
-    this.log("Closing console...");
+    this.log('Closing console...');
     this.close();
   }
 
   public cmdBind(args: string[]): void {
     if (args.length < 3) {
-      this.error("Usage: bind <type> <key> <command>");
+      this.error('Usage: bind <type> <key> <command>');
       return;
     }
 
     const [type, key, ...commandParts] = args;
-    const command = commandParts.join(" ");
+    const command = commandParts.join(' ');
 
     this.log(`Bind ${type} ${key} to "${command}"`);
   }
 
   public cmdUnbind(args: string[]): void {
     if (args.length < 2) {
-      this.error("Usage: unbind <type> <key>");
+      this.error('Usage: unbind <type> <key>');
       return;
     }
 
@@ -414,7 +508,10 @@ export class Console {
     const style = ImGui.GetStyle();
     const oldWindowRounding = style.WindowRounding;
     const oldWindowBorderSize = style.WindowBorderSize;
-    const oldFramePadding = new ImGui.ImVec2(style.FramePadding.x, style.FramePadding.y);
+    const oldFramePadding = new ImGui.ImVec2(
+      style.FramePadding.x,
+      style.FramePadding.y,
+    );
 
     style.WindowRounding = 0;
     style.WindowBorderSize = 0;
@@ -435,9 +532,12 @@ export class Console {
       ImGui.WindowFlags.NoTitleBar |
       ImGui.WindowFlags.MenuBar;
 
-    if (ImGui.Begin("##Console", null, windowFlags)) {
+    if (ImGui.Begin('##Console', null, windowFlags)) {
       // Aumentar o padding vertical para a barra de menu
-      ImGui.PushStyleVar(ImGui.StyleVar.FramePadding, new ImGui.ImVec2(oldFramePadding.x, 8));
+      ImGui.PushStyleVar(
+        ImGui.StyleVar.FramePadding,
+        new ImGui.ImVec2(oldFramePadding.x, 8),
+      );
 
       if (ImGui.BeginMenuBar()) {
         for (const menuName in this.menus) {
@@ -448,7 +548,7 @@ export class Console {
         }
 
         ImGui.SameLine(ImGui.GetWindowWidth() - 200);
-        ImGui.Text(`Filters: ${Array.from(this.activeLogLevels).join(", ")}`);
+        ImGui.Text(`Filters: ${Array.from(this.activeLogLevels).join(', ')}`);
 
         ImGui.EndMenuBar();
       }
@@ -458,19 +558,28 @@ export class Console {
 
       ImGui.Separator();
 
-      const footerHeight = ImGui.GetStyle().ItemSpacing.y + ImGui.GetFrameHeightWithSpacing();
-      ImGui.BeginChild("ScrollingRegion", new ImGui.ImVec2(0, -footerHeight), false, ImGui.WindowFlags.HorizontalScrollbar);
+      const footerHeight =
+        ImGui.GetStyle().ItemSpacing.y + ImGui.GetFrameHeightWithSpacing();
+      ImGui.BeginChild(
+        'ScrollingRegion',
+        new ImGui.ImVec2(0, -footerHeight),
+        false,
+        ImGui.WindowFlags.HorizontalScrollbar,
+      );
 
       ImGui.PushStyleVar(ImGui.StyleVar.ItemSpacing, new ImGui.ImVec2(4, 1));
 
       for (const item of this.history) {
         if (item.context && item.contextColor) {
-          ImGui.PushStyleColor(ImGui.Col.Text, new ImGui.ImVec4(
-            item.contextColor[0],
-            item.contextColor[1],
-            item.contextColor[2],
-            item.contextColor[3]
-          ));
+          ImGui.PushStyleColor(
+            ImGui.Col.Text,
+            new ImGui.ImVec4(
+              item.contextColor[0],
+              item.contextColor[1],
+              item.contextColor[2],
+              item.contextColor[3],
+            ),
+          );
 
           ImGui.Text(item.context);
 
@@ -479,18 +588,21 @@ export class Console {
           ImGui.PopStyleColor();
         }
 
-        ImGui.PushStyleColor(ImGui.Col.Text, new ImGui.ImVec4(
-          item.color[0],
-          item.color[1],
-          item.color[2],
-          item.color[3]
-        ));
+        ImGui.PushStyleColor(
+          ImGui.Col.Text,
+          new ImGui.ImVec4(
+            item.color[0],
+            item.color[1],
+            item.color[2],
+            item.color[3],
+          ),
+        );
 
         ImGui.TextUnformatted(item.text);
         ImGui.PopStyleColor();
       }
 
-      if (this.scrollToBottom || (ImGui.GetScrollY() >= ImGui.GetScrollMaxY())) {
+      if (this.scrollToBottom || ImGui.GetScrollY() >= ImGui.GetScrollMaxY()) {
         ImGui.SetScrollHereY(1.0);
         this.scrollToBottom = false;
       }
@@ -511,16 +623,14 @@ export class Console {
         ImGui.InputTextFlags.CallbackHistory |
         ImGui.InputTextFlags.EnterReturnsTrue;
 
-
-      ImGui.InputText("##input", inputText, inputTextFlags);
+      ImGui.InputText('##input', inputText, inputTextFlags);
       this.inputBuffer = inputText.buffer;
-
 
       ImGui.PopItemWidth();
 
       ImGui.SameLine();
 
-      if (ImGui.Button("Clear", new ImGui.ImVec2(clearButtonWidth, 0))) {
+      if (ImGui.Button('Clear', new ImGui.ImVec2(clearButtonWidth, 0))) {
         this.cmdClear();
       }
     }
@@ -546,7 +656,7 @@ export class Console {
     if (this.historyIndex < this.commandHistory.length) {
       this.inputBuffer = this.commandHistory[this.historyIndex];
     } else {
-      this.inputBuffer = "";
+      this.inputBuffer = '';
     }
   }
 }

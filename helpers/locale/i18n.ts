@@ -1,12 +1,11 @@
-import { i18n } from "@lingui/core";
-import { messages as en } from "../../locales/en/messages";
-import { messages as pt_BR } from "../../locales/pt/messages";
+import { i18n } from '@lingui/core';
+import { messages as en } from '../../locales/en/messages';
+import { messages as pt_BR } from '../../locales/pt/messages';
 
 export async function dynamicActivate(locale: string) {
-
   let mod: any;
   switch (locale) {
-    case "pt_BR": {
+    case 'pt_BR': {
       mod = pt_BR;
       break;
     }

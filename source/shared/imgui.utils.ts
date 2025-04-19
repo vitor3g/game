@@ -1,10 +1,10 @@
-import { ImGui } from "@zhobo63/imgui-ts";
+import { ImGui } from '@zhobo63/imgui-ts';
 
 /**
  * Converts a hex string (#RRGGBB or #RGB) to ImVec4 with alpha set to 1.0
  */
 export function hexToImVec4(hex: string): ImGui.ImVec4 {
-  const sanitized = hex.replace(/^#/, "");
+  const sanitized = hex.replace(/^#/, '');
 
   let r: number, g: number, b: number;
 
@@ -17,7 +17,9 @@ export function hexToImVec4(hex: string): ImGui.ImVec4 {
     g = parseInt(sanitized.substring(2, 4), 16);
     b = parseInt(sanitized.substring(4, 6), 16);
   } else {
-    g_core.getCoreLogger().error("Invalid hex color format. Use #RRGGBB or #RGB.");
+    g_core
+      .getCoreLogger()
+      .error('Invalid hex color format. Use #RRGGBB or #RGB.');
     throw new Error();
   }
 

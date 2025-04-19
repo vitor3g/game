@@ -9,6 +9,6 @@
     "helpers/**/*",
     "data/**/*",
     "@types/**/*",
-    "DFFLoader/**/*",
+    "DFFLoader/**/*"
   ]
 }

@@ -1,22 +1,24 @@
-import { CommonEvents } from "../enums/CommonEventsEnum";
+import { CommonEvents } from '../enums/CommonEventsEnum';
 
 export class Debug {
   private _showFps = true;
   private _showPhysicsDebug = false;
 
-
   constructor() {
-    g_core.getInternalNet().on(CommonEvents.EVENT_UPDATE, this.update.bind(this));
+    g_core
+      .getInternalNet()
+      .on(CommonEvents.EVENT_UPDATE, this.update.bind(this));
 
-    g_core.getConsole().setMenuItems("Overlays", [
+    g_core.getConsole().setMenuItems('Overlays', [
       {
-        label: "Show FPS",
+        label: 'Show FPS',
         callback: () => this.toggleFps(),
-      }, {
-        label: "Show Physics Debug",
+      },
+      {
+        label: 'Show Physics Debug',
         callback: () => this.togglePhysicsDebug(),
-      }
-    ])
+      },
+    ]);
   }
 
   public toggleFps() {
@@ -27,24 +29,18 @@ export class Debug {
     this._showPhysicsDebug = !this._showPhysicsDebug;
 
     if (this._showPhysicsDebug) {
-      g_core.getGraphics().getRenderer().getPhysics().debug?.enable()
-
+      g_core.getGraphics().getRenderer().getPhysics().debug?.enable();
     } else {
-      g_core.getGraphics().getRenderer().getPhysics().debug?.disable()
+      g_core.getGraphics().getRenderer().getPhysics().debug?.disable();
     }
   }
 
   public update() {
-
     const io = g_core.getGraphics().getGUI().getIO();
 
     if (!io) return;
 
     const fps = io.Framerate.toFixed(1);
-
-
-
-
 
     if (this._showPhysicsDebug) {
       g_core.getGraphics().getRenderer().getPhysics().updateDebugger();
@@ -55,7 +51,7 @@ export class Debug {
         .getGraphics()
         .getGUI()
         .getPrimitives()
-        .addText(fps, 10, 10, "#090909");
+        .addText(fps, 10, 10, '#090909');
     }
   }
 }

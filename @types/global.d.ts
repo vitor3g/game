@@ -1,5 +1,5 @@
-import type { Core } from "@/client/core/Core";
-import * as AmmoGlobal from "ammojs-typed";
+import type { Core } from '@/client/core/Core';
+import * as AmmoGlobal from 'ammojs-typed';
 
 export {};
 

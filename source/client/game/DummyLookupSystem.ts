@@ -1,6 +1,10 @@
 import type { Object3D } from 'three';
 import { BaseSystem } from '../ecs/BaseSystem';
-import { SystemPriority, type IGameEntity, type IGameWorld } from '../ecs/interfaces';
+import {
+  SystemPriority,
+  type IGameEntity,
+  type IGameWorld,
+} from '../ecs/interfaces';
 
 export class DummyLookupSystem extends BaseSystem {
   constructor(world: IGameWorld) {
@@ -20,22 +24,23 @@ export class DummyLookupSystem extends BaseSystem {
 
     const object = entity.object3D;
 
-    object.traverse(child => {
-      if (child.name?.toLowerCase().includes("dummy")) {
+    object.traverse((child) => {
+      if (child.name?.toLowerCase().includes('dummy')) {
         dummies.push(child);
       }
     });
 
     if (dummies.length > 0) {
-      console.log(`Encontrados ${dummies.length} dummies no modelo "${entity.name}"`);
+      console.log(
+        `Encontrados ${dummies.length} dummies no modelo "${entity.name}"`,
+      );
     }
-
 
     return dummies;
   }
 
   getDummy(entity: IGameEntity, dummyName: string): Object3D | null {
     const dummies = this.getDummies(entity);
-    return dummies.find(dummy => dummy.name === dummyName) ?? null;
+    return dummies.find((dummy) => dummy.name === dummyName) ?? null;
   }
 }
