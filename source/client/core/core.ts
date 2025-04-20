@@ -2,6 +2,7 @@ import { Game } from '../game/Game';
 import { Graphics } from '../graphics/Graphics';
 import { AssetManager } from './AssetManager';
 import { AudioManager } from './AudioManager';
+import { ConnectionManager } from './ConnectionManager';
 import { Console, type ContextLogger } from './Console';
 import { Debug } from './Debug';
 import { InternalNetwork } from './InternalNetwork';
@@ -16,6 +17,7 @@ export class Core {
   private readonly internalNetwork: InternalNetwork;
   private readonly assetManager: AssetManager;
   private readonly audioManager: AudioManager;
+  private readonly connectionManager: ConnectionManager;
   private readonly debug: Debug;
 
   constructor() {
@@ -23,6 +25,13 @@ export class Core {
     this.console = new Console();
     this.internalNetwork = new InternalNetwork();
     this.logger = this.console.NewLoggerCtx('dz::core');
+
+    this.connectionManager = new ConnectionManager({
+      maxReconnectAttempts: 5,
+      autoReconnect: true,
+      reconnectInterval: 1000,
+      debug: true,
+    })
 
     this.graphics = new Graphics();
     this.assetManager = new AssetManager();
@@ -40,7 +49,10 @@ export class Core {
     this.console.start();
     this.graphics.start();
 
-    await this.game.start();
+
+    this.connectionManager.connect('ws://localhost:22003').then(async () => {
+      await this.game.start();
+    });
   }
 
   public getGraphics() {
@@ -77,6 +89,10 @@ export class Core {
 
   public getAssetManager() {
     return this.assetManager;
+  }
+
+  public getConnectionManager() {
+    return this.connectionManager;
   }
 }
 

@@ -1,5 +1,8 @@
-import { listen } from '@colyseus/tools';
+import { Core } from "./core/Core";
 
-import app from './app.config';
+async function bootstrap() {
+  const app = new Core();
+  await app.initialize()
+}
 
-listen(app);
+bootstrap();

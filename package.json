@@ -41,6 +41,8 @@
     "vite-plugin-inspect": "^10.1.0"
   },
   "dependencies": {
+    "@colyseus/core": "^0.16.16",
+    "@colyseus/ws-transport": "^0.16.4",
     "@enable3d/ammo-physics": "^0.26.1",
     "@lingui/cli": "^5.1.2",
     "@lingui/core": "^5.1.2",
@@ -56,6 +58,7 @@
     "babel-core": "^6.26.3",
     "buffer": "^6.0.3",
     "chalk": "^5.4.1",
+    "colyseus.js": "^0.16.15",
     "corrode": "^1.0.6",
     "debug": "^4.4.0",
     "deep-eql": "^5.0.2",

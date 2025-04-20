@@ -71,7 +71,7 @@ export class Console {
     this.commandHistory = [];
     this.historyIndex = -1;
     this.commands = {};
-    this.isOpen = false;
+    this.isOpen = localStorage.getItem('console-open') === 'true';
     this.scrollToBottom = true;
     this.backgroundColor = [0.05, 0.05, 0.05, 0.9];
     this.textColor = [0.8, 0.8, 0.8, 1.0];
@@ -148,9 +148,6 @@ export class Console {
     hookGlobalConsole(this);
   }
 
-  private _onUnhandledRejection(event: PromiseRejectionEvent) {
-    this.error(event.reason);
-  }
 
   public async start() {
     g_core
@@ -253,6 +250,7 @@ export class Console {
 
   public toggle(): void {
     this.isOpen = !this.isOpen;
+    localStorage.setItem('console-open', String(this.isOpen));
   }
 
   public open(): void {
