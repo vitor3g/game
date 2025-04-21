@@ -13,10 +13,10 @@ export class Graphics {
     this.gui = new Gui(this);
   }
 
-  public async start() {
-    this.renderer.start();
+  public async initialize() {
+    this.renderer.initialize();
 
-    await this.gui.start();
+    await this.gui.initialize();
   }
 
   public getLogger() {

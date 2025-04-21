@@ -8,10 +8,8 @@ import type {
   IGameWorld,
 } from '../ecs/interfaces';
 import { CommonEvents } from '../enums/CommonEventsEnum';
-import { Ambience } from './ambience/Ambience';
-import { DummySystem } from './DummySystem';
 
-export class GameWorld implements IGameWorld {
+export class World implements IGameWorld {
   readonly name: string;
   readonly scene: Scene;
   readonly entities = new Map<EntityId, IGameEntity>();
@@ -23,17 +21,11 @@ export class GameWorld implements IGameWorld {
   private paused = false;
   private logger: ContextLogger;
 
-  private readonly ambience: Ambience;
-
-  constructor(name: string, scene: Scene) {
-    this.name = name;
-    this.scene = scene;
+  constructor() {
+    this.name = 'BaseWorld';
+    this.scene = g_core.getGraphics().getRenderer().scene;
 
     this.logger = g_core.getConsole().NewLoggerCtx(`dz::world:${name}`);
-
-    this.ambience = new Ambience(this);
-
-    this.addSystem(new DummySystem(this));
   }
 
   createEntity(name = 'Entity'): IGameEntity {
@@ -209,9 +201,6 @@ export class GameWorld implements IGameWorld {
     }
 
     this.logInfo(`Initializing world '${this.name}'`);
-
-    /* Ambience */
-    this.ambience.initialieze();
 
     for (const system of this.systems) {
       system.initialize();

@@ -3,12 +3,12 @@ import { CommonEvents } from '../enums/CommonEventsEnum';
 
 export class Physics {
   private readonly physics: AmmoPhysics;
+
   constructor() {
-    // physics
     this.physics = new AmmoPhysics(g_core.getGraphics().getRenderer().scene);
   }
 
-  public async start() {
+  public async initialize() {
     g_core
       .getInternalNet()
       .on(CommonEvents.EVENT_UPDATE, this.update.bind(this));

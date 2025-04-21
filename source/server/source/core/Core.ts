@@ -1,4 +1,4 @@
-import { GameServer } from "./GameServer";
+import { GameServer } from './GameServer';
 
 export class Core {
   private gameServer: GameServer;

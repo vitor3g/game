@@ -16,7 +16,7 @@ export class Gui {
     this.logger.log('gui');
   }
 
-  public async start() {
+  public async initialize() {
     await ImGui.default();
 
     ImGui.CHECKVERSION();

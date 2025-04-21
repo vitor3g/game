@@ -1,4 +1,3 @@
-import { Game } from '../game/Game';
 import { Graphics } from '../graphics/Graphics';
 import { AssetManager } from './AssetManager';
 import { AudioManager } from './AudioManager';
@@ -11,7 +10,6 @@ import { ServerImpl } from './ServerImpl';
 export class Core {
   private readonly logger: ContextLogger;
   private readonly graphics: Graphics;
-  private readonly game: Game;
   private readonly keybinds: Keybinds;
   private readonly console: Console;
   private readonly internalNetwork: InternalNetwork;
@@ -30,7 +28,6 @@ export class Core {
     this.audioManager = new AudioManager();
     this.keybinds = new Keybinds();
     this.serverImpl = new ServerImpl();
-    this.game = new Game();
     this.debug = new Debug();
 
     this.internalNetwork.setDebugMode(false);
@@ -38,13 +35,11 @@ export class Core {
     this.logger.log('Core');
   }
 
-  public async start() {
-    this.console.start();
-    this.graphics.start();
-
+  public async initialize() {
+    this.console.initialize();
+    this.graphics.initialize();
 
     await this.serverImpl.connect('ws://localhost:22003');
-    //await this.game.start();
   }
 
   public getGraphics() {
@@ -53,10 +48,6 @@ export class Core {
 
   public getDebug() {
     return this.debug;
-  }
-
-  public getGame() {
-    return this.game;
   }
 
   public getConsole() {

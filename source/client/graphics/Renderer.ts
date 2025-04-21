@@ -33,16 +33,25 @@ export class Renderer {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.5;
 
-    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x000000, 1));
-    this.scene.add(new THREE.AmbientLight(0xffffff, 1));
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(50, 200, 100);
-    light.position.multiplyScalar(1.3);
+    this.scene.background = new THREE.Color(0xa8def0);
+    const dLight = new THREE.DirectionalLight('white', 0.6);
+
+    dLight.position.x = 20;
+    dLight.position.y = 30;
+    dLight.castShadow = true;
+    dLight.shadow.mapSize.width = 4096;
+    dLight.shadow.mapSize.height = 4096;
+    const d = 35;
+    dLight.shadow.camera.left = -d;
+    dLight.shadow.camera.right = d;
+    dLight.shadow.camera.top = d;
+    dLight.shadow.camera.bottom = -d;
+    this.scene.add(dLight);
 
     this.clock = new THREE.Clock();
   }
 
-  public start() {
+  public initialize() {
     this.renderer.setAnimationLoop((dt) => this.animate(dt));
 
     document.body.appendChild(this.renderer.domElement);

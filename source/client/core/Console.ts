@@ -148,8 +148,7 @@ export class Console {
     hookGlobalConsole(this);
   }
 
-
-  public async start() {
+  public async initialize() {
     g_core
       .getInternalNet()
       .on(CommonEvents.EVENT_KEYDOWN, (key: KeyboardKeys) => {

@@ -1,10 +1,10 @@
-import type { Object3D } from 'three';
-import { BaseSystem } from '../ecs/BaseSystem';
+import { BaseSystem } from '@/client/ecs/BaseSystem';
 import {
   SystemPriority,
   type IGameEntity,
   type IGameWorld,
-} from '../ecs/interfaces';
+} from '@/client/ecs/interfaces';
+import type { Object3D } from 'three';
 
 export class DummySystem extends BaseSystem {
   constructor(world: IGameWorld) {

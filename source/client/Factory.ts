@@ -7,7 +7,7 @@ export class dzFactoryStatic {
   public async create() {
     PhysicsLoader('/data/libs/ammojs', async () => {
       const module = CoreModule();
-      await module.start();
+      await module.initialize();
     });
 
     return 0;
