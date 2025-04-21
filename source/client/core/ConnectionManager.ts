@@ -13,9 +13,9 @@ export class ConnectionManager {
   private readonly options: ConnectionManagerOptions;
 
   /* Impl */
-  private client: Client | null = null;
-  private isConnected = false;
-  private reconnectAttempts = 0;
+  public client: Client | null = null;
+  public isConnected = false;
+  public reconnectAttempts = 0;
 
   constructor(options: ConnectionManagerOptions) {
     this.logger = g_core.getConsole().NewLoggerCtx("dz::server-impl");
@@ -23,10 +23,10 @@ export class ConnectionManager {
   }
 
 
-  async connect(url: string) {
+  async createClient(url: string) {
     if (!url) {
       this.logger.error("Invalid server URL");
-      return;
+      return false;
     };
 
 
@@ -44,18 +44,15 @@ export class ConnectionManager {
       });
 
       if (!response.ok) {
-        return this.logger.error(`Failed to connect to server: ${response.status} ${response.statusText}`);
-      }
+        this.logger.error(`Failed to connect to server: ${response.status} ${response.statusText}`);
 
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+        return false;
+      }
 
       this.isConnected = true;
       this.reconnectAttempts = 0;
 
-
       this.logger.log("Connected to server:", url);
-
-      return this.client;
     } catch (error) {
       this.logger.error("Failed to connect to server:", error);
 
@@ -68,7 +65,7 @@ export class ConnectionManager {
         }
 
         setTimeout(() => {
-          this.connect(url).catch(() => {});
+          this.createClient(url).catch(() => {});
         }, this.options.reconnectInterval);
       }
 
@@ -77,15 +74,10 @@ export class ConnectionManager {
   }
 
 
+  public getClient(): Client | null {
+    return this.client;
+  }
   public getConnectionStatus() {
     return this.isConnected;
-  }
-
-  public getClient() {
-    if (!this.client) {
-      return this.logger.error("Client not initialized. Please call connect() first.");
-    }
-
-    return this.client;
   }
 }

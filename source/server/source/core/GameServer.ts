@@ -1,7 +1,8 @@
-import type { Server } from "@colyseus/core";
+import { type Server } from "@colyseus/core";
 import { monitor } from "@colyseus/monitor";
 import config, { listen, type ConfigOptions } from "@colyseus/tools";
 import { type Application } from "express";
+import { GameRoom } from "./GameRoom";
 
 export class GameServer {
   private gameServer: Server;
@@ -11,11 +12,13 @@ export class GameServer {
   constructor() {
     this.config = config({
       options: {
-        devMode: true,
+        devMode: false,
       },
+
+      displayLogs: true,
       initializeGameServer: (gameServer) => {
         this.gameServer = gameServer;
-
+        this.gameServer.define("game", GameRoom);
       },
       initializeExpress: (app) => {
         this.app = app;
