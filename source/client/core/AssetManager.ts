@@ -407,7 +407,6 @@ export class AssetManager {
     this.logger.log('Preloading critical assets...');
 
     const criticalAssets: any[] = [
-      // Exemplos: UI, texturas do carro principal, etc.
       // "car_main", "ui_elements", "engine_sound"
     ];
 

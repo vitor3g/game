@@ -5,7 +5,9 @@ export class GameRoom extends Room {
     return true;
   }
 
-  onJoin(): void | Promise<any> {}
+  onJoin(): void | Promise<any> {
+  }
 
-  onCreate() {}
+  onCreate() {
+  }
 }
