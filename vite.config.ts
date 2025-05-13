@@ -35,6 +35,9 @@ export default defineConfig({
   build: {
     target: 'esnext',
     rollupOptions: {
+      external: [
+        path.join(__dirname, "/source/server")
+      ],
       output: {
         format: 'es',
       },

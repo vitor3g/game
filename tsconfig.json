@@ -28,5 +28,5 @@
     }
   },
   "include": ["source", "helpers", "locales", "vite.config.ts", "@types/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules","source/server" ]
 }
