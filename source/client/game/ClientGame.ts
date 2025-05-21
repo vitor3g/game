@@ -1,3 +1,4 @@
+import { Camera } from './Camera';
 import { Physics } from './Physics';
 import { World } from './World';
 
@@ -8,6 +9,9 @@ export class ClientGame {
   constructor() {
     this.physics = new Physics();
     this.world = new World();
+
+    const camera = new Camera(this.world);
+    this.world.addEntity(camera);
   }
 
   public async initialize() {

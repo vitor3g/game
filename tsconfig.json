@@ -5,7 +5,6 @@
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-    /* Bundler mode */
     "typeRoots": ["node_modules/ammojs-typed/ammo/ambient"],
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -13,7 +12,6 @@
     "moduleDetection": "force",
     "noEmit": true,
     "allowJs": true,
-    /* Linting */
     "strict": true,
     "baseUrl": ".",
     "noUnusedLocals": true,
@@ -28,5 +26,5 @@
     }
   },
   "include": ["source", "helpers", "locales", "vite.config.ts", "@types/**/*"],
-  "exclude": ["node_modules","source/server" ]
+  "exclude": ["node_modules" ]
 }

@@ -2,16 +2,16 @@ import * as THREE from 'three';
 import { Audio, AudioListener, AudioLoader, PositionalAudio } from 'three';
 import { type ContextLogger } from './Console';
 
-// Tipos de som
+
 export enum SoundType {
-  MUSIC = 'music', // Música de fundo
-  SFX = 'sfx', // Efeitos sonoros
-  UI = 'ui', // Sons de interface
-  AMBIENT = 'ambient', // Sons ambientes
-  VEHICLE = 'vehicle', // Sons específicos dos veículos
+  MUSIC = 'music', 
+  SFX = 'sfx', 
+  UI = 'ui', 
+  AMBIENT = 'ambient', 
+  VEHICLE = 'vehicle', 
 }
 
-// Configuração de som
+
 export interface SoundConfig {
   key: string;
   type: SoundType;
@@ -19,11 +19,11 @@ export interface SoundConfig {
   volume?: number;
   autoplay?: boolean;
   spatial?: boolean;
-  radius?: number; // Para sons posicionais
-  rolloffFactor?: number; // Para sons posicionais
+  radius?: number; 
+  rolloffFactor?: number; 
 }
 
-// Classe para representar um som
+
 class Sound {
   public key: string;
   public type: SoundType;
@@ -41,18 +41,18 @@ class Sound {
     this.config = config;
     this.type = config.type;
 
-    // Configurar áudio
+    
     if (config.loop !== undefined) audio.setLoop(config.loop);
     if (config.volume !== undefined) audio.setVolume(config.volume);
 
-    // Para áudio posicional
+    
     if (config.spatial && audio instanceof PositionalAudio) {
       if (config.radius !== undefined) audio.setRefDistance(config.radius);
       if (config.rolloffFactor !== undefined)
         audio.setRolloffFactor(config.rolloffFactor);
     }
 
-    // Autoplay
+    
     if (config.autoplay) {
       this.play();
     }
@@ -96,7 +96,7 @@ class Sound {
     this.audio.setVolume(0);
     this.play();
 
-    // Efeito de fade in
+    
     const startTime = performance.now();
     const tick = () => {
       const elapsed = (performance.now() - startTime) / 1000;
@@ -140,7 +140,7 @@ class Sound {
   }
 }
 
-// Gerenciador de Áudio
+
 export class AudioManager {
   private readonly logger: ContextLogger;
   private readonly listener: AudioListener;
@@ -328,7 +328,7 @@ export class AudioManager {
 
     this.sounds.forEach((sound) => {
       if (!exceptType || sound.type !== exceptType) {
-        // Apenas retoma sons que estavam tocando antes
+        
         if (sound.config.autoplay || sound.isPlaying) {
           sound.play();
         }

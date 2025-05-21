@@ -65,6 +65,6 @@ export class Primitives {
 
   public addLogLine(line: string) {
     this.logLines.push(line);
-    if (this.logLines.length > 1000) this.logLines.shift(); // mantém o tamanho limitado
+    if (this.logLines.length > 1000) this.logLines.shift();
   }
 }
