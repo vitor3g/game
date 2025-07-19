@@ -14,13 +14,11 @@ export class Physics {
       .on(CommonEvents.EVENT_UPDATE, this.update.bind(this));
   }
 
-  private update() {
-    this.physics.update(
-      g_core.getGraphics().getRenderer().getClock().getDelta() * 1000,
-    );
+  private update(dt: number) {
+    this.physics.update(dt * 1000); 
   }
 
-  public getPhysics(): AmmoPhysics {
+  public getAmmo(): AmmoPhysics {
     return this.physics;
   }
 }

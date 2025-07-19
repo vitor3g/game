@@ -18,7 +18,7 @@ export class Keybinds {
       this.keys.add(e.code);
       this.lastKeyPressed = e.code;
 
-      g_core.getInternalNet().emit(CommonEvents.EVENT_KEYDOWN, e.key);
+      g_core.getInternalNet().emit(CommonEvents.EVENT_KEYDOWN, e.key.toLowerCase());
     });
 
     window.addEventListener('keyup', (e) => {
@@ -27,7 +27,7 @@ export class Keybinds {
         this.lastKeyPressed = null;
       }
 
-      g_core.getInternalNet().emit(CommonEvents.EVENT_KEYUP, e.key);
+      g_core.getInternalNet().emit(CommonEvents.EVENT_KEYUP, e.key.toLowerCase());
     });
 
     window.addEventListener('mousemove', (e) => {

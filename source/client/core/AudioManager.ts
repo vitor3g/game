@@ -1,16 +1,13 @@
 import * as THREE from 'three';
 import { Audio, AudioListener, AudioLoader, PositionalAudio } from 'three';
-import { type ContextLogger } from './Console';
-
 
 export enum SoundType {
-  MUSIC = 'music', 
-  SFX = 'sfx', 
-  UI = 'ui', 
-  AMBIENT = 'ambient', 
-  VEHICLE = 'vehicle', 
+  MUSIC = 'music',
+  SFX = 'sfx',
+  UI = 'ui',
+  AMBIENT = 'ambient',
+  VEHICLE = 'vehicle',
 }
-
 
 export interface SoundConfig {
   key: string;
@@ -19,10 +16,9 @@ export interface SoundConfig {
   volume?: number;
   autoplay?: boolean;
   spatial?: boolean;
-  radius?: number; 
-  rolloffFactor?: number; 
+  radius?: number;
+  rolloffFactor?: number;
 }
-
 
 class Sound {
   public key: string;
@@ -41,18 +37,15 @@ class Sound {
     this.config = config;
     this.type = config.type;
 
-    
     if (config.loop !== undefined) audio.setLoop(config.loop);
     if (config.volume !== undefined) audio.setVolume(config.volume);
 
-    
     if (config.spatial && audio instanceof PositionalAudio) {
       if (config.radius !== undefined) audio.setRefDistance(config.radius);
       if (config.rolloffFactor !== undefined)
         audio.setRolloffFactor(config.rolloffFactor);
     }
 
-    
     if (config.autoplay) {
       this.play();
     }
@@ -96,7 +89,6 @@ class Sound {
     this.audio.setVolume(0);
     this.play();
 
-    
     const startTime = performance.now();
     const tick = () => {
       const elapsed = (performance.now() - startTime) / 1000;
@@ -140,9 +132,7 @@ class Sound {
   }
 }
 
-
 export class AudioManager {
-  private readonly logger: ContextLogger;
   private readonly listener: AudioListener;
   private readonly loader: AudioLoader;
 
@@ -157,8 +147,6 @@ export class AudioManager {
   private crossfadeDuration = 1.5;
 
   constructor() {
-    this.logger = g_core.getConsole().NewLoggerCtx('dz::audio-manager');
-
     this.listener = new AudioListener();
     this.loader = new AudioLoader();
 
@@ -170,7 +158,7 @@ export class AudioManager {
 
     this.setupEventListeners();
 
-    this.logger.log('Audio Manager initialized');
+    console.log('Audio Manager initialized');
   }
 
   private setupEventListeners(): void {
@@ -222,7 +210,7 @@ export class AudioManager {
 
       return sound;
     } catch (error) {
-      this.logger.error(`Failed to create audio: ${config.key}`, error);
+      console.error(`Failed to create audio: ${config.key}`, error);
       return null;
     }
   }
@@ -235,7 +223,7 @@ export class AudioManager {
 
       return this.create(buffer, config);
     } catch (error) {
-      this.logger.error(`Failed to load audio: ${url}`, error);
+      console.error(`Failed to load audio: ${url}`, error);
       return null;
     }
   }
@@ -277,7 +265,7 @@ export class AudioManager {
       }
     });
 
-    this.logger.debug(`Volume for ${type} set to ${normalizedVolume}`);
+    console.log(`Volume for ${type} set to ${normalizedVolume}`);
   }
 
   public setGlobalVolume(volume: number): void {
@@ -288,7 +276,7 @@ export class AudioManager {
       sound.setVolume(typeVolume * this.globalVolume);
     });
 
-    this.logger.debug(`Global volume set to ${this.globalVolume}`);
+    console.log(`Global volume set to ${this.globalVolume}`);
   }
 
   public toggleMute(): boolean {
@@ -309,7 +297,7 @@ export class AudioManager {
       });
     }
 
-    this.logger.log(`Sound ${this.muted ? 'muted' : 'unmuted'}`);
+    console.log(`Sound ${this.muted ? 'muted' : 'unmuted'}`);
     return this.muted;
   }
 
@@ -328,7 +316,6 @@ export class AudioManager {
 
     this.sounds.forEach((sound) => {
       if (!exceptType || sound.type !== exceptType) {
-        
         if (sound.config.autoplay || sound.isPlaying) {
           sound.play();
         }
@@ -343,7 +330,7 @@ export class AudioManager {
     const newMusic = this.get(newMusicKey);
 
     if (!newMusic) {
-      this.logger.error(`Music not found: ${newMusicKey}`);
+      console.error(`Music not found: ${newMusicKey}`);
       return;
     }
 
@@ -364,7 +351,7 @@ export class AudioManager {
   public setupEngineSound(vehicleObj: any, soundKey: string): void {
     const sound = this.get(soundKey);
     if (!sound || !(sound.audio instanceof PositionalAudio)) {
-      this.logger.error(`Cannot setup engine sound: ${soundKey}`);
+      console.error(`Cannot setup engine sound: ${soundKey}`);
       return;
     }
 
@@ -407,7 +394,7 @@ export class AudioManager {
     const sound = this.get(key);
 
     if (!sound || !(sound.audio instanceof PositionalAudio)) {
-      this.logger.error(`Sound ${key} doesn't exist or is not positional`);
+      console.error(`Sound ${key} doesn't exist or is not positional`);
       return null;
     }
 
@@ -424,7 +411,7 @@ export class AudioManager {
     const sound = this.get(key);
 
     if (!sound) {
-      this.logger.warn(`Sound not found for one-shot: ${key}`);
+      console.log(`Sound not found for one-shot: ${key}`);
       return;
     }
 
@@ -493,7 +480,7 @@ export class AudioManager {
     const newAmbient = this.get(newAmbientKey);
 
     if (!newAmbient) {
-      this.logger.error(`Ambient sound not found: ${newAmbientKey}`);
+      console.error(`Ambient sound not found: ${newAmbientKey}`);
       return;
     }
 
@@ -516,7 +503,7 @@ export class AudioManager {
     initialWeights: number[] = [],
   ): void {
     if (keys.length === 0) {
-      this.logger.error('No ambient sounds provided for mixer');
+      console.error('No ambient sounds provided for mixer');
       return;
     }
 
@@ -524,7 +511,7 @@ export class AudioManager {
     for (const key of keys) {
       const sound = this.get(key);
       if (!sound) {
-        this.logger.error(`Ambient sound not found for mixer: ${key}`);
+        console.error(`Ambient sound not found for mixer: ${key}`);
         return;
       }
       sounds.push(sound);
@@ -544,13 +531,13 @@ export class AudioManager {
 
   public updateAmbientMixer(keys: string[], weights: number[]): void {
     if (keys.length !== weights.length) {
-      this.logger.error('Mismatch between ambient keys and weights');
+      console.error('Mismatch between ambient keys and weights');
       return;
     }
 
     const sum = weights.reduce((a, b) => a + b, 0);
     if (sum <= 0) {
-      this.logger.warn('All ambient weights are zero or negative');
+      console.log('All ambient weights are zero or negative');
       return;
     }
 
@@ -576,6 +563,6 @@ export class AudioManager {
     this.currentMusic = null;
     this.currentAmbient = null;
 
-    this.logger.log('Audio Manager disposed');
+    console.log('Audio Manager disposed');
   }
 }

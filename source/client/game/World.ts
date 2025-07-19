@@ -1,5 +1,4 @@
 import { Scene } from 'three';
-import type { ContextLogger } from '../core/Console';
 import { BaseEntity } from '../ecs/BaseEntity';
 import type {
   EntityId,
@@ -19,13 +18,10 @@ export class World implements IGameWorld {
 
   private initialized = false;
   private paused = false;
-  private logger: ContextLogger;
 
   constructor() {
     this.name = 'BaseWorld';
     this.scene = g_core.getGraphics().getRenderer().scene;
-
-    this.logger = g_core.getConsole().NewLoggerCtx(`dz::world:${name}`);
   }
 
   createEntity(name = 'Entity'): IGameEntity {
@@ -36,7 +32,7 @@ export class World implements IGameWorld {
 
   addEntity(entity: IGameEntity): void {
     if (this.entities.has(entity.name)) {
-      this.logWarning(
+      console.warn(
         `Entity with ID ${entity.name} already exists in world ${this.name}`,
       );
       return;
@@ -56,7 +52,7 @@ export class World implements IGameWorld {
       entity.initialize();
     }
 
-    this.logDebug(`Entity '${entity.name}' (${entity.name}) added to world`);
+    console.log(`Entity '${entity.name}' (${entity.name}) added to world`);
   }
 
   removeEntity(entityOrId: IGameEntity | EntityId): boolean {
@@ -75,9 +71,7 @@ export class World implements IGameWorld {
 
     this.entities.delete(id);
 
-    this.logDebug(
-      `Entity '${entity.name}' (${entity.name}) removed from world`,
-    );
+    console.log(`Entity '${entity.name}' (${entity.name}) removed from world`);
 
     return true;
   }
@@ -112,7 +106,7 @@ export class World implements IGameWorld {
 
   addSystem(system: IGameSystem): void {
     if (this.systems.includes(system)) {
-      this.logWarning(
+      console.warn(
         `System '${system.name}' already exists in world ${this.name}`,
       );
       return;
@@ -134,7 +128,7 @@ export class World implements IGameWorld {
       });
     }
 
-    this.logDebug(`System '${system.name}' added to world`);
+    console.log(`System '${system.name}' added to world`);
   }
 
   removeSystem(system: IGameSystem): boolean {
@@ -148,7 +142,7 @@ export class World implements IGameWorld {
 
     system.destroy();
 
-    this.logDebug(`System '${system.name}' removed from world`);
+    console.log(`System '${system.name}' removed from world`);
 
     return true;
   }
@@ -200,7 +194,7 @@ export class World implements IGameWorld {
       return;
     }
 
-    this.logInfo(`Initializing world '${this.name}'`);
+    console.log(`Initializing world '${this.name}'`);
 
     for (const system of this.systems) {
       system.initialize();
@@ -212,7 +206,7 @@ export class World implements IGameWorld {
 
     this.initialized = true;
 
-    this.logInfo(`World '${this.name}' initialized`);
+    console.log(`World '${this.name}' initialized`);
 
     g_core
       .getInternalNet()
@@ -223,7 +217,7 @@ export class World implements IGameWorld {
   }
 
   destroy(): void {
-    this.logInfo(`Destroying world '${this.name}'`);
+    console.log(`Destroying world '${this.name}'`);
 
     const entityIds = Array.from(this.entities.keys());
     for (const id of entityIds) {
@@ -248,13 +242,13 @@ export class World implements IGameWorld {
     this.active = false;
     this.initialized = false;
 
-    this.logInfo(`World '${this.name}' destroyed`);
+    console.log(`World '${this.name}' destroyed`);
   }
 
   pause(): void {
     if (!this.paused) {
       this.paused = true;
-      this.logInfo(`World '${this.name}' paused`);
+      console.log(`World '${this.name}' paused`);
 
       g_core.getInternalNet().emit('world.pause', { world: this.name });
     }
@@ -263,7 +257,7 @@ export class World implements IGameWorld {
   resume(): void {
     if (this.paused) {
       this.paused = false;
-      this.logInfo(`World '${this.name}' resumed`);
+      console.log(`World '${this.name}' resumed`);
 
       g_core.getInternalNet().emit('world.resume', { world: this.name });
     }
@@ -289,7 +283,7 @@ export class World implements IGameWorld {
 
     if (data.name) {
       if (data.name !== this.name) {
-        this.logWarning(
+        console.warn(
           `World name mismatch: expected '${this.name}', got '${data.name}'`,
         );
       }
@@ -363,23 +357,5 @@ export class World implements IGameWorld {
 
   private sortSystems(): void {
     this.systems.sort((a, b) => a.priority - b.priority);
-  }
-
-  private logDebug(message: string): void {
-    if (this.logger?.debug) {
-      this.logger.debug(message);
-    }
-  }
-
-  private logInfo(message: string): void {
-    if (this.logger?.log) {
-      this.logger.log(message);
-    }
-  }
-
-  private logWarning(message: string): void {
-    if (this.logger?.warn) {
-      this.logger.warn(message);
-    }
   }
 }

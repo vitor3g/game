@@ -1,6 +1,5 @@
 import { Object3D, Vector3 } from 'three';
 import { v4 as uuidv4 } from 'uuid';
-import type { ContextLogger } from '../core/Console';
 import {
   IGameComponent,
   IGameEntity,
@@ -25,7 +24,6 @@ export class BaseEntity implements IGameEntity {
   private components = new Map<string, IGameComponent>();
   private scripts = new Map<string, IGameScript>();
   private initialized = false;
-  private readonly logger: ContextLogger;
 
   constructor(world: IGameWorld, name = 'Entity') {
     this.id = uuidv4();
@@ -33,7 +31,6 @@ export class BaseEntity implements IGameEntity {
     this.world = world;
     this.object3D = new Object3D();
     this.object3D.name = name;
-    this.logger = g_core.getConsole().NewLoggerCtx('dz::entities');
 
     (this.object3D as any).__entity = this;
   }
@@ -53,7 +50,7 @@ export class BaseEntity implements IGameEntity {
   addComponent<T extends IGameComponent>(component: T): T {
     const type = component.type;
     if (this.components.has(type)) {
-      this.logger.warn(
+      console.warn(
         `Entity ${this.name} already has a component of type ${type}`,
       );
       return this.components.get(type) as T;
@@ -122,7 +119,7 @@ export class BaseEntity implements IGameEntity {
   addScript<T extends IGameScript>(script: T): T {
     const type = script.type;
     if (this.scripts.has(type)) {
-      this.logger.warn(
+      console.warn(
         `Entity ${this.name} already has a script of type ${type}`,
       );
       return this.scripts.get(type) as T;

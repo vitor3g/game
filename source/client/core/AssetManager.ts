@@ -4,11 +4,10 @@ import {
   LoadingManager,
   ObjectLoader,
   TextureLoader,
+  type Material,
 } from 'three';
 import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { type ContextLogger } from './Console';
-
 export enum AssetType {
   MODEL_GLTF = 'model/gltf',
   MODEL_FBX = 'model/fbx',
@@ -35,7 +34,6 @@ export interface AssetGroup {
 }
 
 export class AssetManager {
-  private readonly logger: ContextLogger;
   private assets = new Map<string, AssetMetadata>();
   private groups = new Map<string, AssetGroup>();
   private loadingManager: LoadingManager;
@@ -53,7 +51,6 @@ export class AssetManager {
   private pendingLoads = 0;
 
   constructor() {
-    this.logger = g_core.getConsole().NewLoggerCtx('dz::asset-manager');
 
     this.loadingManager = new LoadingManager();
     this.configureLoadingManager();
@@ -65,23 +62,23 @@ export class AssetManager {
     this.objectLoader = new ObjectLoader(this.loadingManager);
     this.fileLoader = new FileLoader(this.loadingManager);
 
-    this.logger.log('Asset Manager initialized');
+    console.log('Asset Manager initialized');
   }
 
   private configureLoadingManager(): void {
     this.loadingManager.onStart = (url, itemsLoaded, itemsTotal) => {
-      this.logger.log(
+     console.log(
         `Started loading: ${url}. ${itemsLoaded}/${itemsTotal} items loaded`,
       );
     };
 
     this.loadingManager.onLoad = () => {
-      this.logger.log('Loading complete!');
+      console.log('Loading complete!');
     };
 
     this.loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
       const percentage = Math.round((itemsLoaded / itemsTotal) * 100);
-      this.logger.verbose(`Loading: ${percentage}% (${url})`);
+      console.log(`Loading: ${percentage}% (${url})`);
 
       g_core.getInternalNet().emit('asset.progress', {
         url,
@@ -92,7 +89,7 @@ export class AssetManager {
     };
 
     this.loadingManager.onError = (url) => {
-      this.logger.error(`Error loading: ${url}`);
+      console.log(`Error loading: ${url}`);
 
       g_core.getInternalNet().emit('asset.error', { url });
     };
@@ -105,7 +102,7 @@ export class AssetManager {
     dependencies: string[] = [],
   ): void {
     if (this.assets.has(key)) {
-      this.logger.warn(`Asset already registered with key: ${key}`);
+      console.log(`Asset already registered with key: ${key}`);
       return;
     }
 
@@ -118,7 +115,7 @@ export class AssetManager {
     });
 
     this.totalAssets++;
-    this.logger.debug(`Registered asset: ${key} (${url})`);
+    console.log(`Registered asset: ${key} (${url})`);
   }
 
   public createGroup(
@@ -127,7 +124,7 @@ export class AssetManager {
     onComplete?: () => void,
   ): void {
     if (this.groups.has(name)) {
-      this.logger.warn(`Group already exists: ${name}`);
+      console.log(`Group already exists: ${name}`);
       return;
     }
 
@@ -137,7 +134,7 @@ export class AssetManager {
       onComplete,
     });
 
-    this.logger.debug(
+    console.log(
       `Created asset group: ${name} with ${assets.length} assets`,
     );
   }
@@ -146,12 +143,12 @@ export class AssetManager {
     const asset = this.assets.get(key);
 
     if (!asset) {
-      this.logger.error(`Asset not found: ${key}`);
+      console.error(`Asset not found: ${key}`);
       return Promise.reject(new Error(`Asset not found: ${key}`));
     }
 
     if (asset.loaded && asset.data) {
-      this.logger.verbose(`Asset already loaded: ${key}`);
+      console.log(`Asset already loaded: ${key}`);
       return Promise.resolve(asset.data);
     }
 
@@ -168,9 +165,25 @@ export class AssetManager {
       try {
         switch (asset.type) {
           case AssetType.MODEL_GLTF:
-            this.gltfLoader.load(asset.url, (gltf) =>
-              this.handleAssetLoaded(key, gltf, resolve),
-            );
+            this.gltfLoader.load(asset.url, (gltf) => {
+              gltf.scene.traverse((child: any) => {
+                if (child.isMesh) {
+                  const mesh = child;
+                  const materials = Array.isArray(mesh.material)
+                    ? mesh.material
+                    : [mesh.material];
+
+                  materials.forEach((material: Material) => {
+                    material.transparent = false;
+                    material.depthWrite = true;
+                    material.depthTest = true;
+                    material.alphaTest = 0.01;
+                    material.needsUpdate = true;
+                  });
+                }
+              });
+              this.handleAssetLoaded(key, gltf, resolve);
+            });
             break;
 
           case AssetType.MODEL_FBX:
@@ -219,7 +232,7 @@ export class AssetManager {
       } catch (error) {
         this.pendingLoads--;
         this.checkAllLoaded();
-        this.logger.error(`Error loading asset ${key}: ${error}`);
+        console.error(`Error loading asset ${key}: ${error}`);
         reject(error);
       }
     });
@@ -236,7 +249,7 @@ export class AssetManager {
       asset.data = data;
       this.loadedAssets++;
 
-      this.logger.log(`Asset loaded: ${key}`);
+      console.log(`Asset loaded: ${key}`);
 
       g_core.getInternalNet().emit('asset.loaded', { key, data });
 
@@ -257,7 +270,7 @@ export class AssetManager {
         progress: this.getLoadingProgress(),
       });
 
-      this.logger.log('All pending assets loaded completely!');
+      console.log('All pending assets loaded completely!');
     }
   }
 
@@ -265,11 +278,11 @@ export class AssetManager {
     const group = this.groups.get(groupName);
 
     if (!group) {
-      this.logger.error(`Group not found: ${groupName}`);
+      console.error(`Group not found: ${groupName}`);
       return Promise.reject(new Error(`Group not found: ${groupName}`));
     }
 
-    this.logger.log(`Loading asset group: ${groupName}`);
+    console.log(`Loading asset group: ${groupName}`);
 
     g_core.getInternalNet().emit('asset.group.start', {
       group: groupName,
@@ -298,7 +311,7 @@ export class AssetManager {
         }),
       );
 
-      this.logger.log(`Group loaded: ${groupName}`);
+      console.log(`Group loaded: ${groupName}`);
 
       if (group.onComplete) {
         group.onComplete();
@@ -311,7 +324,7 @@ export class AssetManager {
 
       return results;
     } catch (error) {
-      this.logger.error(`Error loading group ${groupName}: ${error}`);
+      console.error(`Error loading group ${groupName}: ${error}`);
 
       g_core.getInternalNet().emit('asset.group.error', {
         group: groupName,
@@ -326,7 +339,7 @@ export class AssetManager {
     const asset = this.assets.get(key);
 
     if (!asset?.loaded) {
-      this.logger.warn(`Attempted to get unloaded asset: ${key}`);
+      console.log(`Attempted to get unloaded asset: ${key}`);
       return null;
     }
 
@@ -349,7 +362,7 @@ export class AssetManager {
       asset.data = undefined;
       this.loadedAssets--;
 
-      this.logger.log(`Asset unloaded: ${key}`);
+      console.log(`Asset unloaded: ${key}`);
       return true;
     }
 
@@ -361,18 +374,18 @@ export class AssetManager {
       const group = this.groups.get(groupName);
 
       if (!group) {
-        this.logger.warn(`Group not found for unloading: ${groupName}`);
+        console.log(`Group not found for unloading: ${groupName}`);
         return;
       }
 
       group.assets.forEach((key) => this.unload(key));
-      this.logger.log(`Group unloaded: ${groupName}`);
+      console.log(`Group unloaded: ${groupName}`);
     } else {
       this.assets.forEach((_asset, key) => {
         this.unload(key);
       });
 
-      this.logger.log('All assets unloaded');
+      console.log('All assets unloaded');
     }
   }
 
@@ -404,7 +417,7 @@ export class AssetManager {
   }
 
   public preloadCriticalAssets(): Promise<void> {
-    this.logger.log('Preloading critical assets...');
+    console.log('Preloading critical assets...');
 
     const criticalAssets: any[] = [
       // "car_main", "ui_elements", "engine_sound"
@@ -412,18 +425,18 @@ export class AssetManager {
 
     return new Promise((resolve) => {
       if (criticalAssets.length === 0) {
-        this.logger.log('No critical assets defined');
+        console.log('No critical assets defined');
         resolve();
         return;
       }
 
       Promise.all(criticalAssets.map((key) => this.load(key)))
         .then(() => {
-          this.logger.log('Critical assets preloaded');
+          console.log('Critical assets preloaded');
           resolve();
         })
         .catch((error) => {
-          this.logger.error(`Error preloading critical assets: ${error}`);
+          console.error(`Error preloading critical assets: ${error}`);
           resolve();
         });
     });

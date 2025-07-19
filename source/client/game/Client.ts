@@ -7,7 +7,9 @@ export class Client {
     this.clientGame = new ClientGame();
   }
 
-  public async initialize() {}
+  public async initialize() {
+    await this.clientGame.initialize();
+  }
 
   public getClientGame() {
     return this.clientGame;

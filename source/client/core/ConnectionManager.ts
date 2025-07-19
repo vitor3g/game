@@ -1,5 +1,4 @@
 import { Client } from 'colyseus.js';
-import type { ContextLogger } from './Console';
 
 export interface ConnectionManagerOptions {
   autoReconnect: boolean;
@@ -9,7 +8,6 @@ export interface ConnectionManagerOptions {
 }
 
 export class ConnectionManager {
-  private readonly logger: ContextLogger;
   private readonly options: ConnectionManagerOptions;
 
   /* Impl */
@@ -18,17 +16,16 @@ export class ConnectionManager {
   public reconnectAttempts = 0;
 
   constructor(options: ConnectionManagerOptions) {
-    this.logger = g_core.getConsole().NewLoggerCtx('dz::server-impl');
     this.options = options;
   }
 
   async createClient(url: string) {
     if (!url) {
-      this.logger.error('Invalid server URL');
+     console.error('Invalid server URL');
       return false;
     }
 
-    this.logger.log('Connecting to server:', url);
+    console.log('Connecting to server:', url);
 
     try {
       this.client = new Client(url);
@@ -44,7 +41,7 @@ export class ConnectionManager {
       });
 
       if (!response.ok) {
-        this.logger.error(
+       console.error(
           `Failed to connect to server: ${response.status} ${response.statusText}`,
         );
 
@@ -54,9 +51,9 @@ export class ConnectionManager {
       this.isConnected = true;
       this.reconnectAttempts = 0;
 
-      this.logger.log('Connected to server:', url);
+      console.log('Connected to server:', url);
     } catch (error) {
-      this.logger.error('Failed to connect to server:', error);
+     console.error('Failed to connect to server:', error);
 
       this.isConnected = false;
       if (
@@ -66,7 +63,7 @@ export class ConnectionManager {
         this.reconnectAttempts++;
 
         if (this.options.debug) {
-          this.logger.log(
+          console.log(
             `Reconnecting to server in ${this.options.reconnectInterval}ms... (${this.reconnectAttempts}/${this.options.maxReconnectAttempts})`,
           );
         }
