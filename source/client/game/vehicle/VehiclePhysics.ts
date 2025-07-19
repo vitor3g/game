@@ -6,36 +6,6 @@ import { DummyLookupSystem } from '../DummySystemLookup';
 import type { ExtendedMesh } from '@enable3d/ammo-physics';
 import * as THREE from 'three';
 
-export interface VehicleHandlingProps {
-  mass: number;
-  turnMass: number;
-  dragCoeff: number;
-  centerOfMass: [number, number, number];
-  percentSubmerged: number;
-  tractionMultiplier: number;
-  tractionLoss: number;
-  tractionBias: number;
-  numberOfGears: number;
-  maxVelocity: number;
-  engineAcceleration: number;
-  engineInertia: number;
-  driveType: 'rwd' | 'fwd' | 'awd';
-  engineType: 'petrol' | 'diesel' | 'electric';
-  brakeDeceleration: number;
-  brakeBias: number;
-  ABS: boolean;
-  steeringLock: number;
-  suspensionForceLevel: number;
-  suspensionDamping: number;
-  suspensionHighSpeedDamping: number;
-  suspensionUpperLimit: number;
-  suspensionLowerLimit: number;
-  suspensionFrontRearBias: number;
-  suspensionAntiDiveMultiplier: number;
-  seatOffsetDistance: number;
-  collisionDamageMultiplier: number;
-}
-
 export interface VehiclePhysicsState {
   position: { x: number; y: number; z: number };
   rotation: { x: number; y: number; z: number; w: number };
@@ -209,16 +179,16 @@ export class VehiclePhysics extends BaseComponent {
     this.entity.object3D.add(this.wheelMeshes[index]);
   }
 
-  onUpdate(): void {
+  onUpdate() {
     const chassis = this.entity.getComponent<VehicleChassis>(VehicleChassis);
+    if (!chassis) return;
 
-    if (!chassis)
-      return console.error('[VehiclePhysics]: Vehicle Chassis not found.');
-
-    for (let i = 0; i < this.vehicle.getNumWheels(); i++) {
-      this.vehicle.setBrake(this.currentBrakeForce, i);
-      this.vehicle.applyEngineForce(this.currentEngineForce, i);
-    }
+    const dummies = g_core
+      .getClient()
+      .getClientGame()
+      .getWorld()
+      .getSystem<DummyLookupSystem>(DummyLookupSystem);
+    if (!dummies) return;
 
     let tm = this.vehicle.getChassisWorldTransform();
     let p = tm.getOrigin();
@@ -227,22 +197,51 @@ export class VehiclePhysics extends BaseComponent {
     chassis.collision.position.set(p.x(), p.y(), p.z());
     chassis.collision.quaternion.set(q.x(), q.y(), q.z(), q.w());
 
-    for (let i = 0; i < this.vehicle.getNumWheels(); i++) {
+    const wheelNames = [
+      'wheel_rf_dummy',
+      'wheel_lf_dummy',
+      'wheel_rb_dummy',
+      'wheel_lb_dummy',
+    ];
+
+    const isRightWheel = [true, false, true, false];
+
+    for (let i = 0; i < wheelNames.length; i++) {
       this.vehicle.updateWheelTransform(i, true);
       tm = this.vehicle.getWheelTransformWS(i);
-      p = tm.getOrigin();
       q = tm.getRotation();
 
-      const wheelMatrix = new THREE.Matrix4();
-      const position = new THREE.Vector3(p.x(), p.y(), p.z());
-      const rotation = new THREE.Quaternion(q.x(), q.y(), q.z(), q.w());
-      
-      wheelMatrix.compose(position, rotation, new THREE.Vector3(1, 1, 1));
-      wheelMatrix.multiply(this.wheelBaseTransforms[i]);
+      const dummy = dummies.getDummy(this.entity, wheelNames[i]);
 
-      this.wheelMeshes[i].matrix.copy(wheelMatrix);
-      this.wheelMeshes[i].matrixAutoUpdate = false;
-      this.wheelMeshes[i].matrixWorldNeedsUpdate = true;
+      if (dummy) {
+        const dummyWorldPos = new THREE.Vector3();
+        dummy.getWorldPosition(dummyWorldPos);
+
+        this.wheelMeshes[i].position.copy(dummyWorldPos);
+
+        this.wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w());
+
+        if (isRightWheel[i]) {
+          const rightWheelRotation = new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            Math.PI,
+          );
+
+          this.wheelMeshes[i].quaternion.multiply(rightWheelRotation);
+        }
+      } else {
+        p = tm.getOrigin();
+        this.wheelMeshes[i].position.set(p.x(), p.y(), p.z());
+        this.wheelMeshes[i].quaternion.set(q.x(), q.y(), q.z(), q.w());
+
+        if (isRightWheel[i]) {
+          const rightWheelRotation = new THREE.Quaternion().setFromAxisAngle(
+            new THREE.Vector3(0, 1, 0),
+            Math.PI,
+          );
+          this.wheelMeshes[i].quaternion.multiply(rightWheelRotation);
+        }
+      }
     }
   }
 
@@ -286,7 +285,7 @@ export class VehiclePhysics extends BaseComponent {
       return {
         type: this.type,
         enabled: this.enabled,
-        initialized: false
+        initialized: false,
       };
     }
 
@@ -295,7 +294,7 @@ export class VehiclePhysics extends BaseComponent {
       return {
         type: this.type,
         enabled: this.enabled,
-        initialized: false
+        initialized: false,
       };
     }
 
@@ -319,16 +318,18 @@ export class VehiclePhysics extends BaseComponent {
         position: {
           x: wheelPos.x(),
           y: wheelPos.y(),
-          z: wheelPos.z()
+          z: wheelPos.z(),
         },
         rotation: {
           x: wheelRot.x(),
           y: wheelRot.y(),
           z: wheelRot.z(),
-          w: wheelRot.w()
+          w: wheelRot.w(),
         },
-        suspensionLength: wheelInfo.get_m_raycastInfo().get_m_suspensionLength(),
-        skidInfo: wheelInfo.get_m_skidInfo()
+        suspensionLength: wheelInfo
+          .get_m_raycastInfo()
+          .get_m_suspensionLength(),
+        skidInfo: wheelInfo.get_m_skidInfo(),
       });
     }
 
@@ -336,43 +337,43 @@ export class VehiclePhysics extends BaseComponent {
       position: {
         x: chassisPos.x(),
         y: chassisPos.y(),
-        z: chassisPos.z()
+        z: chassisPos.z(),
       },
       rotation: {
         x: chassisRot.x(),
         y: chassisRot.y(),
         z: chassisRot.z(),
-        w: chassisRot.w()
+        w: chassisRot.w(),
       },
       linearVelocity: {
         x: linearVel.x(),
         y: linearVel.y(),
-        z: linearVel.z()
+        z: linearVel.z(),
       },
       angularVelocity: {
         x: angularVel.x(),
         y: angularVel.y(),
-        z: angularVel.z()
+        z: angularVel.z(),
       },
       wheelStates,
       engineForce: this.currentEngineForce,
       brakeForce: this.currentBrakeForce,
-      steeringValue: this.currentSteeringValue
+      steeringValue: this.currentSteeringValue,
     };
 
     return {
       type: this.type,
       enabled: this.enabled,
       initialized: true,
-      state
+      state,
     };
   }
 
   fromJSON(json: object): void {
     super.fromJSON(json);
-    
+
     const data = json as any;
-    
+
     if (!data.state || !data.initialized) {
       return;
     }
@@ -387,16 +388,16 @@ export class VehiclePhysics extends BaseComponent {
         new Ammo.btVector3(
           state.linearVelocity.x,
           state.linearVelocity.y,
-          state.linearVelocity.z
-        )
+          state.linearVelocity.z,
+        ),
       );
 
       chassis.collision.body.ammo.setAngularVelocity(
         new Ammo.btVector3(
           state.angularVelocity.x,
           state.angularVelocity.y,
-          state.angularVelocity.z
-        )
+          state.angularVelocity.z,
+        ),
       );
 
       const transform = chassis.collision.body.ammo.getWorldTransform();
@@ -408,7 +409,7 @@ export class VehiclePhysics extends BaseComponent {
         state.rotation.x,
         state.rotation.y,
         state.rotation.z,
-        state.rotation.w
+        state.rotation.w,
       );
 
       chassis.collision.body.ammo.setWorldTransform(transform);
@@ -434,5 +435,38 @@ export class VehiclePhysics extends BaseComponent {
     const cloned = new VehiclePhysics(this.entity);
     cloned.enabled = this.enabled;
     return cloned;
+  }
+
+  public setRotation(rotX: number, rotY: number, rotZ: number): boolean {
+    const chassis = this.entity.getComponent<VehicleChassis>(VehicleChassis);
+    if (!chassis?.collision?.body) return false;
+
+    const ammoBody = chassis.collision.body.ammo;
+    const transform = ammoBody.getWorldTransform();
+
+    const euler = new THREE.Euler(rotX, rotY, rotZ, 'YXZ');
+    const quat = new THREE.Quaternion().setFromEuler(euler);
+
+    const rotation = new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w);
+    transform.setRotation(rotation);
+
+    ammoBody.setWorldTransform(transform);
+    ammoBody.activate();
+    return true;
+  }
+
+  public setPosition(posX: number, posY: number, posZ: number): boolean {
+    const chassis = this.entity.getComponent<VehicleChassis>(VehicleChassis);
+    if (!chassis?.collision?.body) return false;
+
+    const ammoBody = chassis.collision.body.ammo;
+    const transform = ammoBody.getWorldTransform();
+
+    const position = new Ammo.btVector3(posX, posY, posZ);
+    transform.setOrigin(position);
+
+    ammoBody.setWorldTransform(transform);
+    ammoBody.activate();
+    return true;
   }
 }

@@ -10,6 +10,8 @@ export class dzFactoryStatic {
       await module.initialize();
     });
 
+    window.DRIFTZONE_DEBUG = true;
+
     return 0;
   }
 }

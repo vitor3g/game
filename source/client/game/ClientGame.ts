@@ -37,21 +37,20 @@ export class ClientGame {
     this.physics.initialize();
     this.world.addSystem(this.dummyLookupSystem);
 
-    const vehicle = new s15();
-    this.world.addEntity(vehicle);
+    const veh = new s15();
 
-    this.physics.getAmmo().debug?.enable();
+    this.world.addEntity(veh);
 
-    setInterval(() => {
-      this.physics.getAmmo().updateDebugger();
-    }, 10);
+    veh.warpIntoVehicle();
 
-    const groundSize = { width: 300, height: 300 };
     const ground = this.physics.getAmmo().add.ground({
-      width: groundSize.width,
-      height: groundSize.height,
-      y: -1,
+      width: 100,
+      height: 100,
+      depth: 4,
+      collisionFlags: 1,
     });
+
+    ground.body.needUpdate = false;
     ground.body.setFriction(1);
   }
 
